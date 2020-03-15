@@ -1,11 +1,18 @@
 /* eslint-disable arrow-parens */
+// Express loader
+// Here are loaded all the express instances
 import express from 'express';
 import cors from 'cors';
 import listEndpoints from 'express-list-endpoints';
 import compression from 'compression';
+
 import routes from '../routes';
 import { server } from '../config';
 import Logger from './logger';
+
+// Morgan doesn't work with import do not change to import
+// API requests logger
+const morgan = require('morgan');
 
 const app = express();
 
@@ -26,6 +33,9 @@ app.use(cors());
 
 // Middleware that transforms the raw string of req.body into json
 app.use(express.json());
+
+// Logs API requests
+app.use(morgan('dev'));
 
 // Load API routes
 app.use(server.prefix, routes());
@@ -56,12 +66,13 @@ app.use((err, req, res) => {
 
 // Server listen
 app.listen(server.port || 3000, err => {
+  // If any error before the server loader will show the message
   if (err) {
     Logger.error(err);
     process.exit(1);
   }
   Logger.info(`
-  \n\n
+  \n
       ################################################
         🛡️ Server listening on port: ${server.port} 🛡️
       ################################################

@@ -1,14 +1,29 @@
 /* eslint-disable object-curly-newline */
 /* eslint-disable arrow-parens */
 /* eslint-disable comma-dangle */
+// Logger
+// This logger is used to show error/info messages about the status of the API
 import winston from 'winston';
 import moment from 'moment';
-import { logger } from '../config';
+import { logger, NODE_ENV } from '../config';
 
 const transports = [];
 
 // For development in prod need to check for dev env
-transports.push(new winston.transports.Console());
+// in dev we want more info error tracking
+// in prod essential info error message
+if (NODE_ENV.env !== 'development') {
+  transports.push(
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.cli(),
+        winston.format.splat()
+      ),
+    })
+  );
+} else {
+  transports.push(new winston.transports.Console());
+}
 
 // Parse meta keys
 const parser = string => {

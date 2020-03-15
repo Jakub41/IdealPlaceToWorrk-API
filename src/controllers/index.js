@@ -1,3 +1,4 @@
-import shopifyController from './shopifyController';
+// Import/export for the endpoints controller
+import TestCtrl from './TestController';
 
-export default { ShopCtrl: shopifyController };
+export default { TestCtrl };
