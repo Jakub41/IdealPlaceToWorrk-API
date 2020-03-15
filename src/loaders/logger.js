@@ -5,9 +5,17 @@
 // This logger is used to show error/info messages about the status of the API
 import winston from 'winston';
 import moment from 'moment';
+// import logSymbols from 'log-symbols';
+import fs from 'fs-extra';
 import { logger, NODE_ENV } from '../config';
 
 const transports = [];
+const dir = './logs';
+
+// Creating the logs dir if does not exist
+if (!fs.existsSync(dir)) {
+  fs.mkdirSync(dir);
+}
 
 // For development in prod need to check for dev env
 // in dev we want more info error tracking
@@ -19,6 +27,10 @@ if (NODE_ENV.env !== 'development') {
         winston.format.cli(),
         winston.format.splat()
       ),
+    }),
+    new winston.transports.File({
+      level: 'error',
+      filename: `${dir}/logs.log`,
     })
   );
 } else {
@@ -51,6 +63,7 @@ const LoggerInstance = winston.createLogger({
         .local()
         .format('YYYY-MM-DD HH:MM:ss');
       const metaMsg = meta ? `: ${parser(meta)}` : '';
+      // const symbol = level === 'error' ? logSymbols.error : logSymbols.success;
       return `${ts} [${level}] ${parser(message)} ${metaMsg}`;
     })
   ),
