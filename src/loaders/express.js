@@ -12,7 +12,7 @@ import Logger from './logger';
 
 // Morgan doesn't work with import do not change to import
 // API requests logger
-const morgan = require('morgan');
+// const morgan = require('morgan');
 
 const app = express();
 
@@ -35,7 +35,7 @@ app.use(cors());
 app.use(express.json());
 
 // Logs API requests
-app.use(morgan('dev'));
+// app.use(morgan('dev'));
 
 // Load API routes
 app.use(server.prefix, routes());
@@ -55,13 +55,14 @@ app.use((req, res, next) => {
 });
 
 // Error handler
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.json({
     errors: {
       message: err.message,
     },
   });
+  next();
 });
 
 // Server listen

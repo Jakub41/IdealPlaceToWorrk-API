@@ -7,5 +7,5 @@ const route = Router();
 export default app => {
   app.use('/', route);
 
-  route.get('/test', TestController.TestCtrl.getAll);
+  route.get('/test/:id', TestController.TestCtrl.getAll);
 };

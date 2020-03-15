@@ -1,10 +1,15 @@
+import logger from '../loaders/logger';
+
 // An example of a controller for an endpoint
 const TestController = {
-  async getAll(req, res) {
+  async getAll(req, res, next) {
     try {
-      await res.status(200).json({ msg: 'Hello' });
+      const params = req.params.id;
+      console.log(params);
+      return await res.status(200).json({ msg: 'Hello', params });
     } catch (err) {
-      res.status(500).json(err);
+      logger.error('🔥 error: %o', err);
+      return next(err);
     }
   },
 };
