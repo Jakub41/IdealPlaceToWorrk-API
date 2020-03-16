@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { mongoUrl } from '../config';
 import logger from './logger';
 
+// Mongo connection
 export default async () => {
   try {
     const connection = await mongoose.connect(mongoUrl.url);
