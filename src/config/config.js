@@ -4,6 +4,8 @@
 import dotenv from 'dotenv';
 
 // Check if env exists
+const envFound = dotenv.config();
+
 class ValidationError extends Error {
   constructor(message) {
     super(message);
@@ -13,14 +15,15 @@ class ValidationError extends Error {
   }
 }
 
-const envFound = dotenv.config();
 if (envFound.error) {
   // Crash the entire app to notify of missing .env file
 
   // We cant use logger here because in the first place, process.env.LOG_LEVEL
   // is not defined since we don't have a .env at this point
   // Logger.error("⚠️  Couldn't find .env file  ⚠️");
-  process.on('uncaughtException', () => {});
+  process.on('uncaughtException', (err) => {
+    throw new Error(err);
+  });
   throw new ValidationError("⚠️  Couldn't find .env file  ⚠️");
 }
 

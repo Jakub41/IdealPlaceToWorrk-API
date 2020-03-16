@@ -8,7 +8,7 @@ export default async ({ expressApp }) => {
   try {
     // Loading Mongo
     await mongooseLoader();
-    Logger.info('✌️  DB loaded and connected! 🔋');
+    Logger.info('✌️ DB loaded and connected! 🔋');
 
     // Loading express
     await expressLoader({ app: expressApp });
