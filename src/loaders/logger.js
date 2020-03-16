@@ -22,52 +22,59 @@ if (!fs.existsSync(dir)) {
 // in prod essential info error message
 if (NODE_ENV.env !== 'development') {
   transports.push(
-    new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.cli(),
-        winston.format.splat()
-      ),
-    }),
+    new winston.transports.Console(),
     new winston.transports.File({
-      level: 'error',
+      level: logger,
+      prettyPrint: true,
+      silent: false,
+      timestamp: true,
+      json: false,
       filename: `${dir}/logs.log`,
-    })
+    }),
   );
 } else {
   transports.push(new winston.transports.Console());
 }
 
-// Parse meta keys
-const parser = string => {
-  if (!string) {
-    return '';
+class Logger {
+  dateFormat = () => {
+    return new Date(Date.now()).toUTCString();
+  };
+  constructor(route) {
+    this.log_data = null;
+    this.route = route;
+    const logger = winston.createLogger({
+      transports,
+      format: winston.format.combine(
+        winston.format.simple(),
+        winston.format.printf((info) => {
+          let message = `${this.dateFormat()} | ${info.level.toUpperCase()} | ${
+            info.message
+          } `;
+          message = info.obj
+            ? message + `data:${JSON.stringify(info.obj)} | `
+            : message;
+          message = this.log_data
+            ? message + `log_data:${JSON.stringify(this.log_data)} | `
+            : message;
+          return message;
+        }),
+      ),
+    });
+    this.logger = logger;
   }
-  if (typeof string === 'string') {
-    return string;
+  setLogData(log_data) {
+    this.log_data = log_data;
   }
-  return Object.keys(string).length ? JSON.stringify(string, undefined, 2) : '';
-};
+  async info(message, obj) {
+    this.logger.log('info', `${message} ${obj || ''}`);
+  }
+  async debug(message, obj) {
+    this.logger.log('debug', `${message} ${obj || ''}`);
+  }
+  async error(message, obj) {
+    this.logger.log('error', `${message} ${obj || ''}`);
+  }
+}
 
-// Logger instance
-const LoggerInstance = winston.createLogger({
-  level: logger.level,
-  levels: winston.config.npm.levels,
-  format: winston.format.combine(
-    winston.format.colorize(),
-    winston.format.timestamp(),
-    winston.format.errors({ stack: true }),
-    winston.format.splat(),
-    winston.format.printf(info => {
-      const { timestamp, level, message, meta } = info;
-      const ts = moment(timestamp)
-        .local()
-        .format('YYYY-MM-DD HH:MM:ss');
-      const metaMsg = meta ? `: ${parser(meta)}` : '';
-      // const symbol = level === 'error' ? logSymbols.error : logSymbols.success;
-      return `${ts} [${level}] ${parser(message)} ${metaMsg}`;
-    })
-  ),
-  transports,
-});
-
-export default LoggerInstance;
+export default new Logger();

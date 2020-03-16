@@ -8,18 +8,25 @@
     "prod": "node -r esm server.js",
     "dev": "nodemon -r esm server.js",
     "debug": "ndb nodemon -r esm server.js",
-    "lint": "eslint './**/*.{js}' --max-warnings 0",
-    "fix": "eslint './*' --fix"
+    "lint": "eslint . --ext .js,.jsx --quiet",
+    "fix": "eslint './*' --fix",
+    "prettier": "prettier --write src/**/*.{js,css}"
   },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
     }
   },
+  "eslintIgnore": [
+    "package.json",
+    "package-lock.json",
+    "combined.log"
+  ],
   "lint-staged": {
     "./**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
-      "prettier --write",
+      "npm run prettier",
       "npm run lint --color",
+      "npm run fix",
       "git add"
     ]
   },

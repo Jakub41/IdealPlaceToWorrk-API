@@ -4,10 +4,24 @@
 import dotenv from 'dotenv';
 
 // Check if env exists
+class ValidationError extends Error {
+  constructor(message) {
+    super(message);
+    if ('captureStackTrace' in Error) {
+      Error.captureStackTrace(this, ValidationError);
+    }
+  }
+}
+
 const envFound = dotenv.config();
-if (!envFound) {
-  // This error should crash the whole process
-  throw new Error("⚠️  Couldn't find .env file  ⚠️");
+if (envFound.error) {
+  // Crash the entire app to notify of missing .env file
+
+  // We cant use logger here because in the first place, process.env.LOG_LEVEL
+  // is not defined since we don't have a .env at this point
+  // Logger.error("⚠️  Couldn't find .env file  ⚠️");
+  process.on('uncaughtException', () => {});
+  throw new ValidationError("⚠️  Couldn't find .env file  ⚠️");
 }
 
 // Env for Dev/Prod
