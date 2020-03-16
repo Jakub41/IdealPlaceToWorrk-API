@@ -2,13 +2,12 @@
 // Here general config of the API based on the ENV
 // and tools, 3rd parties or etc which requires env var
 import dotenv from 'dotenv';
-import Logger from '../loaders/logger';
 
 // Check if env exists
 const envFound = dotenv.config();
 if (!envFound) {
   // This error should crash the whole process
-  Logger.error("⚠️  Couldn't find .env file  ⚠️");
+  throw new Error("⚠️  Couldn't find .env file  ⚠️");
 }
 
 // Env for Dev/Prod
