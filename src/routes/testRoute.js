@@ -4,7 +4,7 @@ import TestController from '../controllers';
 
 const route = Router();
 
-export default app => {
+export default (app) => {
   app.use('/', route);
 
   route.get('/test/:id', TestController.TestCtrl.getAll);
