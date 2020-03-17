@@ -39,6 +39,7 @@
     "eslint-plugin-import": "^2.20.1",
     "husky": "^4.2.3",
     "lint-staged": "^10.0.8",
+    "minimist": "^1.2.5",
     "ndb": "^1.1.5",
     "nodemon": "^2.0.2"
   },
@@ -59,7 +60,7 @@
     "log-symbols": "^3.0.0",
     "mime-types": "^2.1.26",
     "moment": "^2.24.0",
-    "mongoose": "^5.9.4",
+    "mongoose": "^5.9.5",
     "morgan": "^1.9.1",
     "node-fetch": "^2.6.0",
     "passport": "^0.4.1",
