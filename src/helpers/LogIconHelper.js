@@ -1,3 +1,4 @@
+// Helper to show the icons in terminal
 const LogIconHelper = (info) => {
   if (info.level === 'info') {
     return '✌️';
@@ -7,7 +8,7 @@ const LogIconHelper = (info) => {
     return '🔥';
   }
 
-  return 'warning';
+  return '⚠️';
 };
 
 export default LogIconHelper;
