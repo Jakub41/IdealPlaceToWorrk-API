@@ -47,3 +47,8 @@ export const logger = {
 export const mongoUrl = {
   url: process.env.MONGO_URL,
 };
+
+// Google API
+export const googleApi = {
+  key: process.env.API_KEY,
+};
