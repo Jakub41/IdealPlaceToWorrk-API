@@ -6,7 +6,12 @@ import User from '../models';
 const UserController = {
   async getAll(req, res, next) {
     try {
-      return await res.status(200).json({ msg: 'Hello' });
+      const users = await User.UserModel.find({});
+      const usersCount = await User.UserModel.countDocuments();
+
+      return await res
+        .status(200)
+        .json({ msg: 'Users found!', users, count: usersCount });
     } catch (err) {
       Logger.error(err);
       return next(err);
