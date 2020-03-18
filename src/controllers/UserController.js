@@ -25,9 +25,14 @@ const UserController = {
         Logger.error('USer body not right');
         return res.status(400).json({ msg: ' something wrong' });
       }
+      const userSave = await user.save();
 
-      await user.save();
+      if (!userSave) {
+        Logger.error('User not created');
+        return res.status(500).json({ msg: 'something wrong' });
+      }
 
+      Logger.info('User created');
       return res.status(200).json({ msg: 'User created' });
     } catch (error) {
       Logger.error(error);
