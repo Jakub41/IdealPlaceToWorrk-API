@@ -25,7 +25,7 @@ if (NODE_ENV.env !== 'development') {
   transports.push(
     new winston.transports.Console(),
     new winston.transports.File({
-      level: logger,
+      level: logger.level,
       prettyPrint: true,
       silent: false,
       timestamp: true,
