@@ -15,10 +15,6 @@ const UserController = {
 
   async createNew(req, res, next) {
     try {
-      //   const user = new UserModel({
-      //     ...req.body,
-      //   });
-
       const user = new User.UserModel({ ...req.body });
 
       if (!user) {
