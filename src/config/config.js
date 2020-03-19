@@ -52,3 +52,8 @@ export const mongoUrl = {
 export const googleApi = {
   key: process.env.API_KEY,
 };
+
+// JWT Password
+export const jwtKey = {
+  secretKey: process.env.TOKEN_PASSWORD,
+};
