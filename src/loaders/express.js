@@ -6,6 +6,7 @@ import cors from 'cors';
 import listEndpoints from 'express-list-endpoints';
 import compression from 'compression';
 
+import passport from 'passport';
 import routes from '../routes';
 import { server } from '../config';
 import Logger from './logger';
@@ -47,10 +48,21 @@ export default async ({ app }) => {
   // Compression
   app.use(compression());
 
+  // Passport initialization
+  app.use(passport.initialize());
+
   // catch 404 and forward to error handler
   app.use((req, res, next) => {
     const err = new Error('Not Found');
     err.status = 404;
+    next(err);
+  });
+
+  // catch 401 and forward to error handler
+  app.use((req, res, next) => {
+    const err = new Error('Unauthorized');
+    err.status = 401;
+    Logger.error('Unauthorized');
     next(err);
   });
 
