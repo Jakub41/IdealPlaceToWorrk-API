@@ -39,8 +39,7 @@ const UserController = {
       // };
       const user = await DB.User.findOneAndUpdate(
         { _id: req.params.userId },
-        { updatedAt: new Date() },
-        req.body,
+        { $set: { updatedAt: new Date(), ...req.body } },
         // eslint-disable-next-line arrow-body-style
         (err, doc) => {
           if (err) return err;
