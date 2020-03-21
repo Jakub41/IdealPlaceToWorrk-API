@@ -3,7 +3,7 @@ import auth from '../config/auth/index';
 // eslint-disable-next-line import/named
 import DB from '../models';
 
-const UserController = {
+const AuthController = {
   async registerUser(req, res, next) {
     try {
       const userSchema = {
@@ -69,4 +69,4 @@ const UserController = {
   },
 };
 
-export default UserController;
+export default AuthController;
