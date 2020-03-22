@@ -2,7 +2,6 @@ import { Router } from 'express';
 import TestRoute from './testRoute';
 import UserRoute from './userRoute';
 import AuthRoute from './authRoute';
-import SwaggerRoute from './swaggerRoute';
 
 // Routing
 // Here the import/export of all routes
@@ -13,7 +12,6 @@ export default () => {
   TestRoute(app);
   UserRoute(app);
   AuthRoute(app);
-  SwaggerRoute(app);
 
   return app;
 };

@@ -48,6 +48,8 @@ userSchema.plugin(passportLocalMongoose);
 
 const UserModel = mongoose.model('User', userSchema);
 
+// Swagger docs
+// Use this part to see the structure of the models
 const swaggerSchema = m2s(UserModel);
 console.log(swaggerSchema);
 
