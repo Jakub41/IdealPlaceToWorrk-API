@@ -21,7 +21,8 @@
     "package.json",
     "package-lock.json",
     "combined.log",
-    "swagger.json"
+    "swagger.json",
+    "README.md"
   ],
   "lint-staged": {
     "./**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
