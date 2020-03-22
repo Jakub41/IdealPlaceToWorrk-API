@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import passportLocalMongoose from 'passport-local-mongoose';
+import m2s from 'mongoose-to-swagger';
 
 const userSchema = new mongoose.Schema({
   username: {
@@ -45,10 +46,9 @@ const userSchema = new mongoose.Schema({
 
 userSchema.plugin(passportLocalMongoose);
 
-// userSchema.methods.validPassword = (pwd) => {
-//   // eslint-disable-next-line no-unused-expressions
-//   this.password === pwd;
-// };
+const UserModel = mongoose.model('User', userSchema);
 
-// module.exports = mongoose.model('User', userSchema);
-export default mongoose.model('User', userSchema);
+const swaggerSchema = m2s(UserModel);
+console.log(swaggerSchema);
+
+export default UserModel;

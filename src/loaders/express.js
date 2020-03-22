@@ -5,11 +5,14 @@ import express from 'express';
 import cors from 'cors';
 import listEndpoints from 'express-list-endpoints';
 import compression from 'compression';
-
 import passport from 'passport';
+
+import swaggerUi from 'swagger-ui-express';
 import routes from '../routes';
 import { server } from '../config';
 import Logger from './logger';
+
+import swaggerDocument from '../../swagger.json';
 
 // Morgan doesn't work with import do not change to import
 // API requests logger
@@ -28,6 +31,9 @@ export default async ({ app }) => {
   app.head('/status', (req, res) => {
     res.status(200).end();
   });
+
+  // Swagger Docs
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
   // Enable Cross Origin Resource Sharing to all origins by default
   app.use(cors());

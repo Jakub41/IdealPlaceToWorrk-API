@@ -20,7 +20,8 @@
   "eslintIgnore": [
     "package.json",
     "package-lock.json",
-    "combined.log"
+    "combined.log",
+    "swagger.json"
   ],
   "lint-staged": {
     "./**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
@@ -64,6 +65,7 @@
     "mime-types": "^2.1.26",
     "moment": "^2.24.0",
     "mongoose": "^5.9.5",
+    "mongoose-to-swagger": "^1.0.3",
     "morgan": "^1.9.1",
     "node-fetch": "^2.6.0",
     "passport": "^0.4.1",
