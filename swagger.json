@@ -9,12 +9,38 @@
   "basePath": "/api/v1/",
   "tags": [
     {
+      "name": "Health Check",
+      "description": "API status"
+    },
+    {
       "name": "User",
       "description": "Users operations"
     }
   ],
-  "schemes": ["https", "http"],
+  "schemes": ["http"],
   "paths": {
+    "/status": {
+      "get": {
+        "tags": ["Health Check"],
+        "description": "A health check of the API status",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          }
+        }
+      },
+      "head": {
+        "tags": ["Health Check"],
+        "description": "Head status of thee API",
+        "produces": ["head"],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          }
+        }
+      }
+    },
     "/users": {
       "get": {
         "tags": ["User"],
