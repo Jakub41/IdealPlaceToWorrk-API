@@ -9,20 +9,22 @@ const placeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  Type: {
+  Types: [
+    {
+      type: String,
+      required: true,
+    },
+  ],
+  Website: {
     type: String,
-    required: true,
+    required: false,
   },
   Description: {
     type: String,
     required: false,
   },
-  OpenHoursWeekday: {
-    type: String,
-    required: true,
-  },
-  OpenHoursWeekend: {
-    type: String,
+  OpenHours: {
+    type: Array,
     required: true,
   },
   Pictures: [
@@ -35,15 +37,77 @@ const placeSchema = new mongoose.Schema({
   ],
   OpenNight: {
     type: Boolean,
-    required: true,
+    required: false,
   },
-  Rates: [
+  // Rates: [
+  //   {
+  //     type: Number,
+  //     required: false,
+  //     userId: {
+  //       type: mongoose.Types.ObjectId,
+  //       reference: 'user',
+  //     },
+  //   },
+  // ],
+  // WifiRates: [
+  //   {
+  //     type: Number,
+  //     required: false,
+  //     userId: {
+  //       type: mongoose.Types.ObjectId,
+  //       reference: 'user',
+  //     },
+  //   },
+  // ],
+  // GoodServiceRates: [
+  //   {
+  //     type: Number,
+  //     required: false,
+  //     userId: {
+  //       type: mongoose.Types.ObjectId,
+  //       reference: 'user',
+  //     },
+  //   },
+  // ],
+  // QuitePlaceRates: [
+  //   {
+  //     type: Number,
+  //     required: false,
+  //     userId: {
+  //       type: mongoose.Types.ObjectId,
+  //       reference: 'user',
+  //     },
+  //   },
+  // ],
+
+  // We can calculate average by culculating them in Reviews insted of having another
+  // field in Schema itself
+
+  Reviews: [
     {
-      type: Number,
-      required: false,
-      userId: {
-        type: mongoose.Types.ObjectId,
-        reference: 'user',
+      Author: {
+        type: String,
+        required: true,
+      },
+      Text: {
+        type: String,
+        required: true,
+      },
+      Rating: {
+        type: String,
+        required: true,
+      },
+      GoodService: {
+        type: Number,
+        required: false,
+      },
+      WifiRate: {
+        type: Number,
+        required: false,
+      },
+      QuitePlace: {
+        type: Number,
+        required: false,
       },
     },
   ],
@@ -55,7 +119,7 @@ const placeSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
   },
-  Rate: {
+  RateAverage: {
     type: Number,
     required: false,
   },
@@ -75,6 +139,10 @@ const placeSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
     default: false,
+  },
+  GoogleId: {
+    type: String,
+    required: false,
   },
   createdAt: {
     type: Date,

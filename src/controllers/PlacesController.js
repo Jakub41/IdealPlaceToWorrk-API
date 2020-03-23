@@ -60,11 +60,22 @@ const PlacesController = {
     try {
       // eslint-disable-next-line no-undef
       const resp = await fetch(
-        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=coworking+cafe+in+warsaw&key=${googleApi.key}`,
+        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=open+night+cafe+in+warsaw&key=${googleApi.key}`,
       );
       Logger.info(googleApi.key);
       const places = await resp.json();
       return res.status(200).send(places.results);
+    } catch (err) {
+      Logger.error(err);
+      return next(err);
+    }
+  },
+  async findSpecificPlace(req, res, next) {
+    try {
+      const places = await DB.Place.find({
+        Name: { $regex: req.body.searchQuery },
+      });
+      return res.status(200).send(places);
     } catch (err) {
       Logger.error(err);
       return next(err);
