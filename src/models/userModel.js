@@ -50,6 +50,9 @@ const UserModel = mongoose.model('User', userSchema);
 
 // Swagger docs
 // Use this part to see the structure of the models
+// The output can be copy/paste inside the "swagger.json"
+// To document the model under model definition section
+// This can be commented to production
 const swaggerSchema = m2s(UserModel);
 console.log(swaggerSchema);
 
