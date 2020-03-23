@@ -50,10 +50,22 @@ export const mongoUrl = {
 
 // Google API
 export const googleApi = {
-  key: process.env.API_KEY,
+  key: process.env.GOOGLE_API,
 };
 
 // JWT Password
 export const jwtKey = {
   secretKey: process.env.TOKEN_PASSWORD,
+};
+
+// SendGrid Config
+export const sendGridConfig = {
+  password: process.env.SEND_GRID_PASSWORD,
+  username: process.env.SEND_GRID_USERNAME,
+};
+
+// Facebook Config
+export const facebookConfig = {
+  appId: process.env.FACEBOOK_APP_ID,
+  secretKey: process.env.FACEBOOK_APP_SECRET,
 };

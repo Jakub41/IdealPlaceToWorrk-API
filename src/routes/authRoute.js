@@ -21,4 +21,5 @@ export default (app) => {
     passport.authenticate('jwt'),
     Controller.AuthCtrl.refreshToken,
   );
+  app.get('/emailverification/:emailToken', Controller.AuthCtrl.verifyEmail);
 };
