@@ -10,4 +10,5 @@ export {
   jwtKey,
   sendGridConfig,
   facebookConfig,
+  redisConfig,
 } from './config';

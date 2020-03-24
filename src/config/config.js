@@ -69,3 +69,8 @@ export const facebookConfig = {
   appId: process.env.FACEBOOK_APP_ID,
   secretKey: process.env.FACEBOOK_APP_SECRET,
 };
+
+// Redis
+export const redisConfig = {
+  port: process.env.REDIS_PORT,
+};
