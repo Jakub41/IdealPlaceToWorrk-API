@@ -1,11 +1,16 @@
 import mongoose from 'mongoose';
 import passportLocalMongoose from 'passport-local-mongoose';
+import m2s from 'mongoose-to-swagger';
 
 const userSchema = new mongoose.Schema({
+  // for now username will be equal to email (if user registered by email) later on i suppose we
+  // can change it to be just email and not to be required since data from google and facebook will
+  // be stored as firstname and lastname and we can use it do display reviews (just sugestion)
+
   username: {
     type: String,
     required: true,
-    unigue: true,
+    unique: true,
   },
   picture: {
     type: String,
@@ -33,6 +38,15 @@ const userSchema = new mongoose.Schema({
       ref: 'places',
     },
   ],
+  emailToken: {
+    type: String,
+    required: false,
+  },
+  active: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
   createdAt: {
     type: Date,
     required: true,
@@ -45,10 +59,14 @@ const userSchema = new mongoose.Schema({
 
 userSchema.plugin(passportLocalMongoose);
 
-// userSchema.methods.validPassword = (pwd) => {
-//   // eslint-disable-next-line no-unused-expressions
-//   this.password === pwd;
-// };
+const UserModel = mongoose.model('User', userSchema);
 
-// module.exports = mongoose.model('User', userSchema);
-export default mongoose.model('User', userSchema);
+// Swagger docs
+// Use this part to see the structure of the models
+// The output can be copy/paste inside the "swagger.json"
+// To document the model under model definition section
+// This can be commented to production
+const swaggerSchema = m2s(UserModel);
+console.log(swaggerSchema);
+
+export default UserModel;

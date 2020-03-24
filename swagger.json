@@ -1,0 +1,280 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": " This API Provides the fundamentals of the back-end system of the **Ideal Place To Work** Web App. \nThe API is based on the following core tech:\n- NodeJS V12+ \n- ExpressJS V4+\n- MongoDB V4+\n",
+    "version": "1.0.0",
+    "title": "Ideal Place To Work - API"
+  },
+  "host": "localhost:9000",
+  "basePath": "/api/v1/",
+  "tags": [
+    {
+      "name": "Health Check",
+      "description": "API status"
+    },
+    {
+      "name": "User",
+      "description": "Users operations"
+    }
+  ],
+  "schemes": ["http"],
+  "paths": {
+    "/status": {
+      "get": {
+        "tags": ["Health Check"],
+        "description": "A health check of the API status",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          }
+        }
+      },
+      "head": {
+        "tags": ["Health Check"],
+        "description": "Head status of thee API",
+        "produces": ["head"],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Gets all the users",
+        "description": "Response is a list of users",
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/user/:id": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get one user by id",
+        "description": "",
+        "produces": ["application/json"],
+        "responses": {
+          "default": {
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/user/register": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Create user",
+        "description": "User registration",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Created user object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/user/refresh": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Refresh the access Token",
+        "description": "",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "in": "head",
+            "name": "head",
+            "description": "Refresh the access token",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "items": {
+                "$ref": "#/definitions/User"
+              }
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "successful operation"
+          }
+        }
+      }
+    },
+    "/user/login": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Logs user into the system",
+        "description": "",
+        "operationId": "",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "body",
+            "description": "The user  name for login",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "password",
+            "in": "query",
+            "description": "The password for login",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "string"
+            },
+            "headers": {
+              "X-Expires-After": {
+                "type": "string",
+                "format": "date-time",
+                "description": "date in UTC when token expires"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid username/password supplied"
+          }
+        }
+      }
+    },
+    "/user/:userId": {
+      "patch": {
+        "tags": ["User"],
+        "summary": "Updated user",
+        "description": "This can only be done by the logged in user.",
+        "operationId": "updateUser",
+        "produces": ["application/xml", "application/json"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "url",
+            "description": "userId that need to be updated",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Updated user object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid user supplied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["User"],
+        "summary": "Delete user",
+        "description": "This can only be done by the logged in user.",
+        "produces": ["application/json"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "url",
+            "description": "The iuserId that needs to be deleted",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid userId supplied"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "user_auth": {
+      "type": "apiKey",
+      "authorizationUrl": "http://lcalhost:9000/api/v1/login",
+      "flow": "implicit",
+      "scopes": {
+        "write:users": "modify an user",
+        "read:users": "read user"
+      }
+    },
+    "api_key": {
+      "type": "apiKey",
+      "name": "api_key",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "User": {
+      "type": "object",
+      "required": [
+        "username",
+        "firstname",
+        "lastname",
+        "createdAt",
+        "updatedAt"
+      ],
+      "properties": {
+        "username": { "type": "string" },
+        "picture": { "type": "string", "required": false },
+        "firstname": { "type": "string" },
+        "lastname": { "type": "string" },
+        "favouritePlaces": { "type": "array", "items": [] },
+        "addedPlaces": { "type": "array", "items": [] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "_id": { "type": "string" },
+        "hash": { "type": "string" },
+        "salt": { "type": "string" }
+      },
+      "xml": {
+        "name": "User"
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "GitHub Repository",
+    "url": "https://github.com/Jakub41/IdealPlaceToWorrk-API"
+  }
+}

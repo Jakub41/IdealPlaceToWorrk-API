@@ -8,4 +8,6 @@ export {
   mongoUrl,
   googleApi,
   jwtKey,
+  sendGridConfig,
+  facebookConfig,
 } from './config';

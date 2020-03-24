@@ -9,16 +9,17 @@ export default (app) => {
   app.use('/', route);
   app.use(passport.initialize());
 
-  app.post('/register', Controller.AuthCtrl.registerUser);
+  app.post('/user/register', Controller.AuthCtrl.registerUser);
   app.post(
-    '/login',
+    '/user/login',
     auth.basic,
     auth.setUserInfo,
     Controller.AuthCtrl.loginUser,
   );
   app.post(
-    '/refresh',
+    '/user/refresh',
     passport.authenticate('jwt'),
     Controller.AuthCtrl.refreshToken,
   );
+  app.get('/emailverification/:emailToken', Controller.AuthCtrl.verifyEmail);
 };

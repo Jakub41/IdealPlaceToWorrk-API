@@ -1,5 +1,6 @@
 import passport from 'passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
+// import { FacebookStrategy } from 'passport-facebook';
 import jwt from 'jsonwebtoken';
 import basicAuth from 'express-basic-auth';
 import atob from 'atob';
@@ -25,6 +26,23 @@ passport.use(
     });
   }),
 );
+
+// passport.use(
+//   new FacebookStrategy(
+//     {
+//       clientID: facebookConfig.appId,
+//       clientSecret: facebookConfig.secretKey,
+//       callbackURL: 'http://localhost:9000/auth/facebook/callback',
+//     },
+//     (accessToken, refreshToken, profile, cb) => {
+//       DB.User.findOrCreate(
+//         { facebookId: profile.id, active: true },
+//         (err, user) => cb(err, user),
+//         // eslint-disable-next-line function-paren-newline
+//       );
+//     },
+//   ),
+// );
 
 const checkInMongoose = async (username, password, cb) => {
   const authResult = await DB.User.authenticate()(username, password);

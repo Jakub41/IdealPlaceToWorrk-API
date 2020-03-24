@@ -1,3 +1,4 @@
 import User from './userModel';
+import Place from './placesModel';
 
-export default { User };
+export default { User, Place };

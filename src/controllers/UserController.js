@@ -1,4 +1,6 @@
+/* eslint-disable no-underscore-dangle */
 import Logger from '../loaders/logger';
+import emailService from '../services/index';
 // eslint-disable-next-line import/named
 import DB from '../models';
 
@@ -33,27 +35,40 @@ const UserController = {
   },
   async updateUser(req, res, next) {
     try {
-      // const userSchema = {
-      //   ...req.body,
-      //   updatedAt: new Date(),
-      // };
-      const user = await DB.User.findOneAndUpdate(
-        { _id: req.params.userId },
-        { $set: { updatedAt: new Date(), ...req.body } },
-        // eslint-disable-next-line arrow-body-style
-        (err, doc) => {
-          if (err) return err;
-          return doc;
-        },
-        { new: true },
-        { returnOriginal: false },
-      );
-      if (!user) {
-        Logger.error('User was not updated');
-        return res.status(500).send('User not updated');
+      if (req.body.newPassword) {
+        const user = await DB.User.findOne({
+          emailToken: req.params.emailToken,
+        });
+        if (user) {
+          user.active = true;
+          user.setPassword(req.body.newPassword);
+          user.save();
+          Logger.info('New password was set successfully');
+          return res.status(200).send('New password was set successfully');
+        }
+        Logger.error('User was not found');
+        return res.status(404).send('User was not found');
       }
-      Logger.info(`User with id ${req.params.userId} was updated`);
-      return res.status(200).send(user);
+      if (req.params.userId) {
+        const user = await DB.User.findOneAndUpdate(
+          { _id: req.params.userId },
+          { $set: { updatedAt: new Date(), ...req.body } },
+          // eslint-disable-next-line arrow-body-style
+          (err, doc) => {
+            if (err) return err;
+            return doc;
+          },
+          { new: true },
+          { returnOriginal: false },
+        );
+        if (!user) {
+          Logger.error('User was not updated');
+          return res.status(500).send('User not updated');
+        }
+        Logger.info(`User with id ${req.params.userId} was updated`);
+        return res.status(200).send(user);
+      }
+      return res.status(400).send('Bad request');
     } catch (err) {
       Logger.error(err);
       return next(err);
@@ -68,6 +83,40 @@ const UserController = {
       }
       Logger.info(`User with id ${req.params.userId} was deleted`);
       return res.status(200).send('Ok');
+    } catch (err) {
+      Logger.error(err);
+      return next(err);
+    }
+  },
+  async verifyEmail(req, res, next) {
+    try {
+      // username
+      const user = await DB.User.findOne({
+        username: req.body.username,
+      });
+      if (!user) {
+        Logger.error('User was not found');
+        res.status(404).send('User not found');
+      }
+      user.active = false;
+      user.save();
+      const html = `We are concerned about your safety.
+      <br/>
+      Please follow the link to confirm your identity
+      <br/>
+      http://localhost:9000/api/v1/users/resetpassword/${req.user.emailToken}
+      `;
+      const email = await emailService.sendEmail(
+        'idealPlaceToWork@gmail.com',
+        req.user.username,
+        'verification email',
+        html,
+      );
+      if (!email) {
+        Logger.error('Email was not sent');
+        res.status(404).send('Email was not sent');
+      }
+      return res.status(200).send('ok');
     } catch (err) {
       Logger.error(err);
       return next(err);
