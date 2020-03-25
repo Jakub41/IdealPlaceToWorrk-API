@@ -13,4 +13,8 @@ client.on('connect', () => {
   Logger.info('Connected to Redis');
 });
 
+client.on('error', () => {
+  Logger.error('Redis not connected');
+});
+
 export default client;

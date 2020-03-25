@@ -1,6 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import Logger from '../loaders/logger';
 import emailService from '../services/index';
+import Client from '../loaders/redis';
 // eslint-disable-next-line import/named
 import DB from '../models';
 
@@ -12,6 +13,9 @@ const UserController = {
         Logger.error('User was not found');
         return res.status(404).send('Nothing found');
       }
+      // Set users to redis
+      await Client.setex('users', 3600, JSON.stringify(users));
+
       Logger.info('All the users were found');
       return res.status(200).send(users);
     } catch (err) {

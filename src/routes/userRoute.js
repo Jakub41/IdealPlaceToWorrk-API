@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import passport from 'passport';
 import Controller from '../controllers';
+import cache from '../middleware/cacheMiddle';
 
 const route = Router();
 
@@ -8,7 +9,7 @@ export default (app) => {
   app.use('/', route);
   app.use(passport.initialize());
 
-  app.get('/users', Controller.UserCtrl.getAllUsers);
+  app.get('/users', cache, Controller.UserCtrl.getAllUsers);
   app.get('/users/:userId', Controller.UserCtrl.getSpecificUser);
   app.patch(
     '/users/:userId',
