@@ -10,9 +10,11 @@ const cache = (req, res, next) => {
     // logger.info('Redis data', cachedData); => to see the data from cache
     // Any cache data we get from Redis
     if (!cachedData) {
+      // No data from Redis so we pass to the endpoint hit directly
       logger.info('Not cached data GET from endpoint directly');
       return next();
     }
+    // Data from Redis so return the cachedData
     logger.info('Data from Redis cache');
     return res.status(200).send(JSON.parse(cachedData));
   });
