@@ -3,6 +3,7 @@ import TestRoute from './testRoute';
 import UserRoute from './userRoute';
 import AuthRoute from './authRoute';
 import PlaceRoute from './placeRoute';
+import ReviewRoute from './reviewRoute';
 
 // Routing
 // Here the import/export of all routes
@@ -14,6 +15,7 @@ export default () => {
   UserRoute(app);
   AuthRoute(app);
   PlaceRoute(app);
+  ReviewRoute(app);
 
   return app;
 };

@@ -3,10 +3,12 @@ import TestCtrl from './TestController';
 import UserCtrl from './UserController';
 import PlaceCtrl from './PlacesController';
 import AuthCtrl from './AuthenticationController';
+import ReviewCtrl from './ReviewController';
 
 export default {
   TestCtrl,
   UserCtrl,
   AuthCtrl,
   PlaceCtrl,
+  ReviewCtrl,
 };
