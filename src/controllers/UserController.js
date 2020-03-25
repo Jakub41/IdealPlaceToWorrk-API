@@ -30,6 +30,10 @@ const UserController = {
         Logger.error('User was not found');
         return res.status(404).send('User not found');
       }
+
+      // Redis
+      await Client.setex('user', 3600, JSON.stringify(user));
+
       Logger.info(`User with id ${req.params.userId} was found`);
       return res.status(200).send(user);
     } catch (err) {

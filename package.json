@@ -62,6 +62,7 @@
     "express-list-endpoints": "^4.0.1",
     "express-validator": "^6.4.0",
     "fs-extra": "^8.1.0",
+    "js-beautify": "^1.10.3",
     "jsonwebtoken": "^8.5.1",
     "log-symbols": "^3.0.0",
     "mime-types": "^2.1.26",

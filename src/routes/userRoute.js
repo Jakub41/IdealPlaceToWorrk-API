@@ -10,7 +10,7 @@ export default (app) => {
   app.use(passport.initialize());
 
   app.get('/users', cache, Controller.UserCtrl.getAllUsers);
-  app.get('/users/:userId', Controller.UserCtrl.getSpecificUser);
+  app.get('/users/:userId', cache, Controller.UserCtrl.getSpecificUser);
   app.patch(
     '/users/:userId',
     passport.authenticate('jwt'),
