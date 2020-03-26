@@ -1,7 +1,7 @@
 /* eslint-disable no-underscore-dangle */
 import Logger from '../loaders/logger';
 import emailService from '../services/index';
-import cache from '../loaders/redis';
+import Redis from '../middleware';
 // eslint-disable-next-line import/named
 import DB from '../models';
 
@@ -13,9 +13,8 @@ const UserController = {
         Logger.error('User was not found');
         return res.status(404).send('Nothing found');
       }
-      // Set users to redis
-      await cache.setex('users', 3600, JSON.stringify(users));
-
+      // Redis cache
+      Redis.cache.set_All(req, JSON.stringify(users), next);
       Logger.info('All the users were found');
       return res.status(200).send(users);
     } catch (err) {
@@ -30,10 +29,8 @@ const UserController = {
         Logger.error('User was not found');
         return res.status(404).send('User not found');
       }
-
       // Redis
-      await cache.setex('user', 3600, JSON.stringify(user));
-
+      Redis.cache.set_Specific_Data(req, JSON.stringify(user), next);
       Logger.info(`User with id ${req.params.userId} was found`);
       return res.status(200).send(user);
     } catch (err) {
@@ -51,6 +48,7 @@ const UserController = {
           user.active = true;
           user.setPassword(req.body.newPassword);
           user.save();
+          Redis.cache.update_Specific_Data(req, JSON.stringify(user), next);
           Logger.info('New password was set successfully');
           return res.status(200).send('New password was set successfully');
         }
@@ -89,11 +87,7 @@ const UserController = {
         Logger.error('User was not found');
         return res.status(404).send('User not found');
       }
-
-      // Redis delete
-      // this delete the key on the cache
-      await cache.del(JSON.stringify(user));
-
+      Redis.cache.set_Delete_data(req, JSON.stringify(user), next);
       Logger.info(`User with id ${req.params.userId} was deleted`);
       return res.status(200).send('Ok');
     } catch (err) {
