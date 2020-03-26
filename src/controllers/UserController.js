@@ -89,6 +89,11 @@ const UserController = {
         Logger.error('User was not found');
         return res.status(404).send('User not found');
       }
+
+      // Redis delete
+      // this delete the key on the cache
+      await Client.del(JSON.stringify(user));
+
       Logger.info(`User with id ${req.params.userId} was deleted`);
       return res.status(200).send('Ok');
     } catch (err) {

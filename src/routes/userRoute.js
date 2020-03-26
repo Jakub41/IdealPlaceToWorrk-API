@@ -18,7 +18,7 @@ export default (app) => {
   );
   app.delete(
     '/users/:userId',
-    passport.authenticate('jwt'),
+    // passport.authenticate('jwt'),
     Controller.UserCtrl.deleteUser,
   );
   app.post('/users/emailverification', Controller.UserCtrl.verifyEmail);

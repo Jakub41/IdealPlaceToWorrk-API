@@ -4,6 +4,7 @@ import auth from '../config/auth/index';
 import emailService from '../services/index';
 // eslint-disable-next-line import/named
 import DB from '../models';
+// import Client from '../loaders/redis';
 
 const AuthController = {
   async registerUser(req, res, next) {
@@ -21,6 +22,10 @@ const AuthController = {
           .status(500)
           .send('User was not created. Something went wrong');
       }
+
+      // Redis
+      // await Client.append('users', JSON.stringify(user));
+
       // sending an email verification to user
       const html = `Hello, thank you that you have choosen us!
       <br/>
