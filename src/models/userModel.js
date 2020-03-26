@@ -32,6 +32,14 @@ const userSchema = new mongoose.Schema({
       ref: 'places',
     },
   ],
+  facebookId: {
+    type: String,
+    required: false,
+  },
+  googleId: {
+    type: String,
+    required: false,
+  },
   addedPlaces: [
     {
       type: mongoose.Schema.Types.ObjectId,
@@ -59,7 +67,7 @@ const userSchema = new mongoose.Schema({
 
 userSchema.plugin(passportLocalMongoose);
 
-const UserModel = mongoose.model('User', userSchema);
+const UserModel = mongoose.model('user', userSchema);
 
 // Swagger docs
 // Use this part to see the structure of the models
@@ -67,6 +75,7 @@ const UserModel = mongoose.model('User', userSchema);
 // To document the model under model definition section
 // This can be commented to production
 const swaggerSchema = m2s(UserModel);
+// eslint-disable-next-line no-console
 console.log(swaggerSchema);
 
 export default UserModel;
