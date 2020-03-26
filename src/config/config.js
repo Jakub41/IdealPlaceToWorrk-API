@@ -69,3 +69,9 @@ export const facebookConfig = {
   appId: process.env.FACEBOOK_APP_ID,
   secretKey: process.env.FACEBOOK_APP_SECRET,
 };
+
+// Google OAuth Config
+export const googleOAuthConfig = {
+  client_id: process.env.GOOGLE_CLIENT_ID,
+  client_secret: process.env.GOOGLE_CLIENT_SECRET,
+};

@@ -5,6 +5,11 @@ const placeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  userId: {
+    type: mongoose.Types.ObjectId,
+    reference: 'user',
+    required: false,
+  },
   Location: {
     type: String,
     required: true,
@@ -39,46 +44,6 @@ const placeSchema = new mongoose.Schema({
     type: Boolean,
     required: false,
   },
-  // Rates: [
-  //   {
-  //     type: Number,
-  //     required: false,
-  //     userId: {
-  //       type: mongoose.Types.ObjectId,
-  //       reference: 'user',
-  //     },
-  //   },
-  // ],
-  // WifiRates: [
-  //   {
-  //     type: Number,
-  //     required: false,
-  //     userId: {
-  //       type: mongoose.Types.ObjectId,
-  //       reference: 'user',
-  //     },
-  //   },
-  // ],
-  // GoodServiceRates: [
-  //   {
-  //     type: Number,
-  //     required: false,
-  //     userId: {
-  //       type: mongoose.Types.ObjectId,
-  //       reference: 'user',
-  //     },
-  //   },
-  // ],
-  // QuitePlaceRates: [
-  //   {
-  //     type: Number,
-  //     required: false,
-  //     userId: {
-  //       type: mongoose.Types.ObjectId,
-  //       reference: 'user',
-  //     },
-  //   },
-  // ],
 
   // We can calculate average by culculating them in Reviews insted of having another
   // field in Schema itself
@@ -89,12 +54,20 @@ const placeSchema = new mongoose.Schema({
         type: String,
         required: true,
       },
+      UserId: {
+        type: mongoose.Types.ObjectId,
+        reference: 'user',
+      },
+      PlaceId: {
+        type: mongoose.Types.ObjectId,
+        reference: 'place',
+      },
       Text: {
         type: String,
         required: true,
       },
       Rating: {
-        type: String,
+        type: Number,
         required: true,
       },
       GoodService: {
@@ -117,7 +90,7 @@ const placeSchema = new mongoose.Schema({
   },
   Wifi: {
     type: Boolean,
-    required: true,
+    required: false,
   },
   RateAverage: {
     type: Number,

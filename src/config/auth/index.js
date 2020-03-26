@@ -1,11 +1,14 @@
 import passport from 'passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-// import { FacebookStrategy } from 'passport-facebook';
+import FacebookStrategy from 'passport-facebook';
 import jwt from 'jsonwebtoken';
 import basicAuth from 'express-basic-auth';
 import atob from 'atob';
-import { jwtKey } from '../index';
+import Logger from '../../loaders/logger';
+import { jwtKey, facebookConfig, googleOAuthConfig } from '../index';
 import DB from '../../models/index';
+// eslint-disable-next-line import/order
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 passport.serializeUser(DB.User.serializeUser());
 passport.deserializeUser(DB.User.deserializeUser());
@@ -27,22 +30,73 @@ passport.use(
   }),
 );
 
-// passport.use(
-//   new FacebookStrategy(
-//     {
-//       clientID: facebookConfig.appId,
-//       clientSecret: facebookConfig.secretKey,
-//       callbackURL: 'http://localhost:9000/auth/facebook/callback',
-//     },
-//     (accessToken, refreshToken, profile, cb) => {
-//       DB.User.findOrCreate(
-//         { facebookId: profile.id, active: true },
-//         (err, user) => cb(err, user),
-//         // eslint-disable-next-line function-paren-newline
-//       );
-//     },
-//   ),
-// );
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: googleOAuthConfig.client_id,
+      clientSecret: googleOAuthConfig.client_secret,
+      callbackURL: 'http://localhost:9100/api/v1/auth/google/callback',
+    },
+    // eslint-disable-next-line consistent-return
+    async (token, refreshToken, profile, cb) => {
+      try {
+        Logger.info(profile);
+        // eslint-disable-next-line no-console
+        console.log(profile);
+        const user = await DB.User.findOne({ facebookId: profile.id });
+        if (user) {
+          return cb(null, user);
+        }
+        const newUser = await DB.User.create({
+          facebookId: profile.id,
+          active: true,
+          firstname: profile.displayName.split(' ')[0],
+          lastname: profile.displayName.split(' ')[1],
+          username: profile.displayName,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+        return cb(null, newUser);
+      } catch (err) {
+        return cb(err);
+      }
+    },
+  ),
+);
+
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: facebookConfig.appId,
+      clientSecret: facebookConfig.secretKey,
+      callbackURL: 'http://localhost:9100/api/v1/auth/facebook/callback',
+    },
+    // eslint-disable-next-line consistent-return
+    async (token, refreshToken, profile, cb) => {
+      try {
+        Logger.info(profile);
+        // eslint-disable-next-line no-console
+        console.log(profile);
+        const user = await DB.User.findOne({ googleId: profile.id });
+        if (user) {
+          return cb(null, user);
+        }
+        const newUser = await DB.User.create({
+          googleId: profile.id,
+          active: true,
+          firstname: profile.displayName.split(' ')[0],
+          lastname: profile.displayName.split(' ')[1],
+          username: profile.displayName,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        });
+        return cb(null, newUser);
+      } catch (err) {
+        return cb(err);
+      }
+    },
+  ),
+);
 
 const checkInMongoose = async (username, password, cb) => {
   const authResult = await DB.User.authenticate()(username, password);

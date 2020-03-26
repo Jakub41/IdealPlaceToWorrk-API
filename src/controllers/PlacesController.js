@@ -1,9 +1,36 @@
-import fetch from 'node-fetch';
+import geoip from 'geoip-lite';
 import DB from '../models/index';
 import Logger from '../loaders/logger';
-import { googleApi } from '../config/index';
+import Service from '../services/index';
+// import { googleApi } from '../config/index';
+
+// basic route for places done (all we have to do is to add filtering option)
 
 const PlacesController = {
+  async getAll(req, res, next) {
+    try {
+      const places = await DB.Place.find({});
+      if (places) {
+        return res.status(200).json(places);
+      }
+      return res.status(404).json('places not found');
+    } catch (err) {
+      Logger.error(err);
+      return next(err);
+    }
+  },
+  async getSpecificPlace(req, res, next) {
+    try {
+      const place = await DB.Place.findById(req.params.placeId);
+      if (place) {
+        return res.status(200).json(place);
+      }
+      return res.status(404).json('place not found');
+    } catch (err) {
+      Logger.error(err);
+      return next(err);
+    }
+  },
   async addPlace(req, res, next) {
     try {
       Logger.info(req.user);
@@ -35,15 +62,62 @@ const PlacesController = {
       return next(err);
     }
   },
-  async searchForPlaces(req, res, next) {
+  async updateSpecificPlace(req, res, next) {
     try {
-      let places = [];
-      if (req.query.search) {
-        places = await DB.Place.find({
-          Name: { $regex: req.query.search },
+      const placeData = await DB.Place.findById(req.params.placeId);
+      // eslint-disable-next-line no-underscore-dangle
+      const userId = req.user._id.toString();
+      const incomingData = req.body;
+      if (placeData.userId === userId) {
+        // ignore these codes
+        // for(props in incomingData){
+        //     placeData[props] = incomingData[props]
+        // }
+        const updatedPlace = await DB.Place.findByIdAndUpdate(
+          req.params.placeId,
+          incomingData,
+          { new: true },
+        );
+        if (updatedPlace) {
+          return res.status(200).json(updatedPlace);
+        }
+        return res.status(500).send('Place was not updated. Please try later');
+      }
+      return res.status(400).send('not authorised');
+    } catch (err) {
+      Logger.error(err);
+      return next(err);
+    }
+  },
+  async deletePlace(req, res, next) {
+    try {
+      // eslint-disable-next-line no-underscore-dangle
+      const userId = req.user._id.toString();
+      const placeData = await DB.Place.findById(req.params.placeId);
+      if (placeData.posterId === userId) {
+        // eslint-disable-next-line no-unused-vars
+        const removed = await DB.Place.findByIdAndRemove(req.params.placeId);
+        await DB.User.findByIdAndUpdate(userId, {
+          $pull: { addedPlaces: req.params.placeId },
         });
-      } else {
-        places = await DB.Place.find();
+        return res.status(200).json('Deleted');
+      }
+      return res.status(500).send('Was not deleted');
+    } catch (err) {
+      Logger.error(err);
+      return next(err);
+    }
+  },
+  async findSpecificPlace(req, res, next) {
+    try {
+      const placesFromGoogle = await Service.GoogleService.checkPlaceInOurDBAndAddIfNeeded(
+        req.body.searchQuery,
+      );
+      let places = [];
+      if (placesFromGoogle || placesFromGoogle === null) {
+        places = await DB.Place.find({
+          Name: { $regex: req.body.searchQuery },
+        });
       }
       if (places.length === 0) {
         Logger.error('Nothing was found');
@@ -56,25 +130,28 @@ const PlacesController = {
       return next(err);
     }
   },
-  async getDataFromGoogle(req, res, next) {
+  async findPlacesForSpecificArea(req, res, next) {
     try {
-      // eslint-disable-next-line no-undef
-      const resp = await fetch(
-        `https://maps.googleapis.com/maps/api/place/textsearch/json?query=open+night+cafe+in+warsaw&key=${googleApi.key}`,
+      // i'm using hardcoded ip cause i can't get my public ip lol but this info should be
+      // in req.ip after we won't be using localhost
+      const geo = geoip.lookup('2a02:a318:8240:6200:45b2:79d6:3bb5:9665');
+      const location = geo.city;
+      Logger.info(location);
+      // eslint-disable-next-line max-len
+      const placesFromGoogle = await Service.GoogleService.checkPlacesOfSpecifcCityInDBOrAddToOurDb(
+        'Berlin',
       );
-      Logger.info(googleApi.key);
-      const places = await resp.json();
-      return res.status(200).send(places.results);
-    } catch (err) {
-      Logger.error(err);
-      return next(err);
-    }
-  },
-  async findSpecificPlace(req, res, next) {
-    try {
-      const places = await DB.Place.find({
-        Name: { $regex: req.body.searchQuery },
-      });
+      let places = [];
+      if (placesFromGoogle || placesFromGoogle === null) {
+        places = await DB.Place.find({
+          Location: { $regex: new RegExp('Berlin', 'i') },
+        });
+      }
+      if (places.length === 0) {
+        Logger.error('Nothing was found');
+        return res.status(404).send('Nothing was found');
+      }
+      Logger.info('List of places.ok');
       return res.status(200).send(places);
     } catch (err) {
       Logger.error(err);

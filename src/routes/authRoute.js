@@ -9,17 +9,39 @@ export default (app) => {
   app.use('/', route);
   app.use(passport.initialize());
 
-  app.post('/user/register', Controller.AuthCtrl.registerUser);
+  app.get('/auth/facebook', passport.authenticate('facebook'));
+  app.get(
+    '/auth/google',
+    passport.authenticate('google', { scope: ['email'] }),
+  );
+  app.get(
+    '/auth/facebook/callback',
+    passport.authenticate('facebook', {
+      failureRedirect: '/api/v1/auth/login',
+    }),
+    Controller.AuthCtrl.authRedirect,
+  );
+  app.get(
+    '/auth/google/callback',
+    passport.authenticate('google', {
+      failureRedirect: '/api/v1/auth/login',
+    }),
+    Controller.AuthCtrl.authRedirect,
+  );
+  app.post('/auth/register', Controller.AuthCtrl.registerUser);
   app.post(
-    '/user/login',
+    '/auth/login',
     auth.basic,
     auth.setUserInfo,
     Controller.AuthCtrl.loginUser,
   );
   app.post(
-    '/user/refresh',
+    '/auth/refresh',
     passport.authenticate('jwt'),
     Controller.AuthCtrl.refreshToken,
   );
-  app.get('/emailverification/:emailToken', Controller.AuthCtrl.verifyEmail);
+  app.get(
+    '/auth/emailverification/:emailToken',
+    Controller.AuthCtrl.verifyEmail,
+  );
 };
