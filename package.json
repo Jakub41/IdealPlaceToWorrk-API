@@ -25,7 +25,7 @@
     "README.md"
   ],
   "lint-staged": {
-    "./**/*.{js,json,md}": [
+    "./src/**/*.{js,json,md}": [
       "npm run prettier",
       "npm run lint --color",
       "npm run fix",
