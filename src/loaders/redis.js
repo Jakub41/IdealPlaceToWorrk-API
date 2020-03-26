@@ -6,15 +6,15 @@ import Logger from './logger';
 const REDIS_PORT = redisConfig.port || 6379;
 
 // Connect to redis
-const client = redis.createClient(REDIS_PORT);
+const cache = redis.createClient(REDIS_PORT);
 
 // Check connection
-client.on('connect', () => {
+cache.on('connect', () => {
   Logger.info('Connected to Redis');
 });
 
-client.on('error', () => {
+cache.on('error', () => {
   Logger.error('Redis not connected');
 });
 
-export default client;
+export default cache;
