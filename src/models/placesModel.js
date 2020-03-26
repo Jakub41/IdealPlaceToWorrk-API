@@ -5,24 +5,31 @@ const placeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  userId: {
+    type: mongoose.Types.ObjectId,
+    reference: 'user',
+    required: false,
+  },
   Location: {
     type: String,
     required: true,
   },
-  Type: {
+  Types: [
+    {
+      type: String,
+      required: true,
+    },
+  ],
+  Website: {
     type: String,
-    required: true,
+    required: false,
   },
   Description: {
     type: String,
     required: false,
   },
-  OpenHoursWeekday: {
-    type: String,
-    required: true,
-  },
-  OpenHoursWeekend: {
-    type: String,
+  OpenHours: {
+    type: Array,
     required: true,
   },
   Pictures: [
@@ -35,15 +42,45 @@ const placeSchema = new mongoose.Schema({
   ],
   OpenNight: {
     type: Boolean,
-    required: true,
+    required: false,
   },
-  Rates: [
+
+  // We can calculate average by culculating them in Reviews insted of having another
+  // field in Schema itself
+
+  Reviews: [
     {
-      type: Number,
-      required: false,
-      userId: {
+      Author: {
+        type: String,
+        required: true,
+      },
+      UserId: {
         type: mongoose.Types.ObjectId,
         reference: 'user',
+      },
+      PlaceId: {
+        type: mongoose.Types.ObjectId,
+        reference: 'place',
+      },
+      Text: {
+        type: String,
+        required: true,
+      },
+      Rating: {
+        type: Number,
+        required: true,
+      },
+      GoodService: {
+        type: Number,
+        required: false,
+      },
+      WifiRate: {
+        type: Number,
+        required: false,
+      },
+      QuitePlace: {
+        type: Number,
+        required: false,
       },
     },
   ],
@@ -53,9 +90,9 @@ const placeSchema = new mongoose.Schema({
   },
   Wifi: {
     type: Boolean,
-    required: true,
+    required: false,
   },
-  Rate: {
+  RateAverage: {
     type: Number,
     required: false,
   },
@@ -75,6 +112,10 @@ const placeSchema = new mongoose.Schema({
     type: Boolean,
     required: true,
     default: false,
+  },
+  GoogleId: {
+    type: String,
+    required: false,
   },
   createdAt: {
     type: Date,

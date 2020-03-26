@@ -11,4 +11,5 @@ export {
   sendGridConfig,
   facebookConfig,
   redisConfig,
+  googleOAuthConfig,
 } from './config';

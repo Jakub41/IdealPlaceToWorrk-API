@@ -1,3 +1,4 @@
 import emailService from './emailService';
+import GoogleService from './GoogleApiService';
 
-export default emailService;
+export default { GoogleService, emailService };

@@ -1,5 +1,6 @@
 import randomstring from 'randomstring';
 import Logger from '../loaders/logger';
+// eslint-disable-next-line import/no-named-as-default
 import auth from '../config/auth/index';
 import emailService from '../services/index';
 // eslint-disable-next-line import/named
@@ -98,6 +99,18 @@ const AuthController = {
         return res.status(404).send('User was not found. Something went wrong');
       }
       return res.status(200).send({ user, accessToken: token });
+    } catch (err) {
+      Logger.error(err);
+      return next(err);
+    }
+  },
+  async authRedirect(req, res, next) {
+    try {
+      // eslint-disable-next-line no-underscore-dangle
+      const token = auth.getToken({ _id: req.user._id });
+      return res.redirect(
+        `http://localhost:3000/callback?token=${token}&username=${req.user.username}`,
+      );
     } catch (err) {
       Logger.error(err);
       return next(err);
