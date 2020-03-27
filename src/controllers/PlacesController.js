@@ -116,7 +116,7 @@ const PlacesController = {
       let places = [];
       if (placesFromGoogle || placesFromGoogle === null) {
         places = await DB.Place.find({
-          Name: { $regex: req.body.searchQuery },
+          Name: { $regex: new RegExp(req.body.searchQuery, 'i') },
         });
       }
       if (places.length === 0) {

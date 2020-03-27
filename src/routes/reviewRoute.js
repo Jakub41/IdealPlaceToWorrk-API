@@ -14,7 +14,7 @@ export default (app) => {
     Controller.ReviewCtrl.getReviewBySpecificUser,
   );
   app.get(
-    '/reviewForPlace/:placeId',
+    '/reviewsForPlace/:placeId',
     Controller.ReviewCtrl.getReviewForSpecificPlace,
   );
   app.post(
