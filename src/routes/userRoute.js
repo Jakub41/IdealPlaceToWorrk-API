@@ -27,5 +27,5 @@ export default (app) => {
     Controller.UserCtrl.deleteUser,
   );
   app.post('/users/emailverification', Controller.UserCtrl.verifyEmail);
-  app.get('/users/resetpassword/:emailToken', Controller.UserCtrl.updateUser);
+  app.post('/users/resetpassword/:emailToken', Controller.UserCtrl.updateUser);
 };
