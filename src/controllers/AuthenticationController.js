@@ -2,7 +2,7 @@ import randomstring from 'randomstring';
 import Logger from '../loaders/logger';
 // eslint-disable-next-line import/no-named-as-default
 import auth from '../config/auth/index';
-import emailService from '../services/index';
+import Service from '../services/index';
 // eslint-disable-next-line import/named
 import DB from '../models';
 
@@ -29,7 +29,7 @@ const AuthController = {
       <br/>
       http://localhost:9000/api/v1/emailverification/${user.emailToken}
       `;
-      const email = await emailService.sendEmail(
+      const email = await Service.emailService.sendEmail(
         'idealPlaceToWork@gmail.com',
         user.username,
         'verification email',
