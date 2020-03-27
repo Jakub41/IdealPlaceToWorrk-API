@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+// import m2s from 'mongoose-to-swagger';
 
 const reviewSchema = new mongoose.Schema({
   Author: {
@@ -43,4 +44,9 @@ const reviewSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model('review', reviewSchema);
+const ReviewModel = mongoose.model('review', reviewSchema);
+
+// const swaggerSchema = m2s(ReviewModel);
+// console.log(swaggerSchema);
+
+export default ReviewModel;
