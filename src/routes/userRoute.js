@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import passport from 'passport';
 import Controller from '../controllers';
+import Redis from '../middleware';
 
 const route = Router();
 
@@ -8,8 +9,12 @@ export default (app) => {
   app.use('/', route);
   app.use(passport.initialize());
 
-  app.get('/users', Controller.UserCtrl.getAllUsers);
-  app.get('/users/:userId', Controller.UserCtrl.getSpecificUser);
+  app.get('/users', Redis.cache.get_All, Controller.UserCtrl.getAllUsers);
+  app.get(
+    '/users/:userId',
+    Redis.cache.get_Specific_Data,
+    Controller.UserCtrl.getSpecificUser,
+  );
   app.patch(
     '/users/:userId',
     passport.authenticate('jwt'),
@@ -17,6 +22,7 @@ export default (app) => {
   );
   app.delete(
     '/users/:userId',
+    Redis.cache.get_Delete_Data,
     passport.authenticate('jwt'),
     Controller.UserCtrl.deleteUser,
   );

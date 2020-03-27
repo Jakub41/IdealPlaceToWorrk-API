@@ -22,10 +22,7 @@ const morgan = require('morgan');
 export default async ({ app }) => {
   // Health Check endpoint
   app.get(`${server.prefix}status`, (req, res) => {
-    res
-      .status(200)
-      .json('🔥🔥 Server is running 🔥🔥')
-      .end();
+    res.status(200).json('🔥🔥 Server is running 🔥🔥').end();
   });
 
   app.head(`${server.prefix}status`, (req, res) => {

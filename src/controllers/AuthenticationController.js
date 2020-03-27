@@ -5,6 +5,7 @@ import auth from '../config/auth/index';
 import Service from '../services/index';
 // eslint-disable-next-line import/named
 import DB from '../models';
+import Redis from '../middleware/index';
 
 const AuthController = {
   async registerUser(req, res, next) {
@@ -16,12 +17,15 @@ const AuthController = {
         updatedAt: new Date(),
       };
       const user = await DB.User.register(userSchema, req.body.password);
+      // Redis
+      Redis.cache.post_set(req, user, '/api/v1/users');
       if (!user) {
         Logger.error('User was not created. Something went wrong');
         return res
           .status(500)
           .send('User was not created. Something went wrong');
       }
+
       // sending an email verification to user
       const html = `Hello, thank you that you have choosen us!
       <br/>

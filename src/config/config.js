@@ -70,6 +70,11 @@ export const facebookConfig = {
   secretKey: process.env.FACEBOOK_APP_SECRET,
 };
 
+// Redis
+export const redisConfig = {
+  port: process.env.REDIS_PORT,
+};
+
 // Google OAuth Config
 export const googleOAuthConfig = {
   client_id: process.env.GOOGLE_CLIENT_ID,

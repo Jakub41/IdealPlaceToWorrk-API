@@ -10,5 +10,6 @@ export {
   jwtKey,
   sendGridConfig,
   facebookConfig,
+  redisConfig,
   googleOAuthConfig,
 } from './config';

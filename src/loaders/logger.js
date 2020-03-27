@@ -49,9 +49,7 @@ class Logger {
         winston.format.timestamp(),
         winston.format.printf((info) => {
           const { timestamp } = info;
-          const ts = moment(timestamp)
-            .local()
-            .format('LL dddd HH:MM:ss');
+          const ts = moment(timestamp).local().format('LL dddd HH:MM:ss');
           let message = `${ts} | ${LogColor(info)} | ${LogIcon(info)} ${
             info.message
           } `;
