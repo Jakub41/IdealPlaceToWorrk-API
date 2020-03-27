@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+// import m2s from 'mongoose-to-swagger';
 
 const placeSchema = new mongoose.Schema({
   Name: {
@@ -127,4 +128,9 @@ const placeSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model('place', placeSchema);
+const PlaceModel = mongoose.model('place', placeSchema);
+
+// const swaggerSchema = m2s(PlaceModel);
+// console.log(swaggerSchema);
+
+export default PlaceModel;

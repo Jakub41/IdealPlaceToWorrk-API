@@ -15,6 +15,14 @@
     {
       "name": "User",
       "description": "Users operations"
+    },
+    {
+      "name": "Place",
+      "description": "Places operations"
+    },
+    {
+      "name": "Review",
+      "description": "Reviews operations"
     }
   ],
   "schemes": ["http"],
@@ -270,6 +278,60 @@
       },
       "xml": {
         "name": "User"
+      }
+    },
+    "Place": {
+      "type": "object",
+      "title": "Place",
+      "required": [
+        "Name",
+        "Location",
+        "OpenHours",
+        "PriceToEnter",
+        "IsReferencedOnGoogle",
+        "createdAt",
+        "updatedAt"
+      ],
+      "properties": {
+        "Name": { "type": "string" },
+        "userId": { "type": "string", "required": false },
+        "Location": { "type": "string" },
+        "Types": { "type": "array", "items": [] },
+        "Website": { "type": "string", "required": false },
+        "Description": { "type": "string", "required": false },
+        "OpenHours": { "type": "array", "items": [] },
+        "Pictures": { "type": "array", "items": [] },
+        "OpenNight": { "type": "boolean", "required": false },
+        "Reviews": { "type": "array", "items": [] },
+        "PriceToEnter": { "type": "number" },
+        "Wifi": { "type": "boolean", "required": false },
+        "RateAverage": { "type": "number", "required": false },
+        "GoodService": { "type": "number", "required": false },
+        "WifiRate": { "type": "number", "required": false },
+        "QuitePlace": { "type": "number", "required": false },
+        "IsReferencedOnGoogle": { "type": "boolean" },
+        "GoogleId": { "type": "string", "required": false },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "_id": { "type": "string" }
+      }
+    },
+    "Review": {
+      "type": "object",
+      "title": "Review",
+      "required": ["Author", "Text", "Rating", "createdAt", "updatedAt"],
+      "properties": {
+        "Author": { "type": "string" },
+        "UserId": { "type": "string" },
+        "PlaceId": { "type": "string" },
+        "Text": { "type": "string" },
+        "Rating": { "type": "number" },
+        "GoodService": { "type": "number", "required": false },
+        "WifiRate": { "type": "number", "required": false },
+        "QuitePlace": { "type": "number", "required": false },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "_id": { "type": "string" }
       }
     }
   },
