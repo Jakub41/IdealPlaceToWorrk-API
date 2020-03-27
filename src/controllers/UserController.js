@@ -1,7 +1,8 @@
 /* eslint-disable no-underscore-dangle */
 import Logger from '../loaders/logger';
-import emailService from '../services/index';
 import Redis from '../middleware';
+import Service from '../services/index';
+
 // eslint-disable-next-line import/named
 import DB from '../models';
 
@@ -113,7 +114,7 @@ const UserController = {
       <br/>
       http://localhost:9000/api/v1/users/resetpassword/${req.user.emailToken}
       `;
-      const email = await emailService.sendEmail(
+      const email = await Service.emailService.sendEmail(
         'idealPlaceToWork@gmail.com',
         req.user.username,
         'verification email',
