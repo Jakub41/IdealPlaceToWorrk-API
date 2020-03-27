@@ -28,7 +28,7 @@ export default (app) => {
     passport.authenticate('jwt'),
     Controller.PlaceCtrl.deletePlace,
   );
-  app.get('/places', Controller.PlaceCtrl.findSpecificPlace);
+  app.get('/placesSearch', Controller.PlaceCtrl.findSpecificPlace);
   app.get(
     '/placesInSpecificCity',
     Controller.PlaceCtrl.findPlacesForSpecificArea,
