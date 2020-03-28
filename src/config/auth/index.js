@@ -113,7 +113,17 @@ export default {
       ':',
     )[0];
     req.user = await DB.User.findOne({ username });
-    next();
+
+    // Checking if the user is active if not stop here with message
+    // else continue the login
+    if (req.user.active === false) {
+      Logger.info('User is not active');
+      return res.status(400).json('User is not active!');
+    }
+
+    Logger.info('User is active');
+
+    return next();
   },
   getToken: (userInfo) =>
     // eslint-disable-next-line implicit-arrow-linebreak
