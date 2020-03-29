@@ -5,7 +5,7 @@ import auth from '../config/auth/index';
 import Service from '../services/index';
 // eslint-disable-next-line import/named
 import DB from '../models';
-import Helper from '../middleware';
+import Middleware from '../middleware';
 
 const AuthController = {
   async registerUser(req, res, next) {
@@ -18,10 +18,13 @@ const AuthController = {
       };
 
       // Validate password
-      const isValid = Helper.isValidPassword.validate(req.body.password);
-      const failedRules = Helper.isValidPassword.validate(req.body.password, {
-        list: true,
-      });
+      const isValid = Middleware.isValidPassword.validate(req.body.password);
+      const failedRules = Middleware.isValidPassword.validate(
+        req.body.password,
+        {
+          list: true,
+        },
+      );
 
       // Not valid message and list failed rules otherwise register
       if (isValid === false) {
@@ -33,7 +36,7 @@ const AuthController = {
 
       const user = await DB.User.register(userSchema, req.body.password);
       // Redis
-      Helper.cache.post_set(req, user, '/api/v1/users');
+      Middleware.cache.post_set(req, user, '/api/v1/users');
       if (!user) {
         Logger.error('User was not created. Something went wrong');
         return res

@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import passportLocalMongoose from 'passport-local-mongoose';
 import validator from 'validator';
+import { Capitalize } from '../helpers';
 // import m2s from 'mongoose-to-swagger';
 // => Use this to output in console the model structure check the bottom of thr file
 
@@ -28,10 +29,12 @@ const userSchema = new mongoose.Schema({
   },
   firstname: {
     type: String,
+    set: Capitalize,
     required: true,
   },
   lastname: {
     type: String,
+    set: Capitalize,
     required: true,
   },
   favouritePlaces: [
