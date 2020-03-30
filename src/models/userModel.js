@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema({
   favouritePlaces: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'places',
+      ref: 'place',
     },
   ],
   facebookId: {
@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema({
   addedPlaces: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'places',
+      ref: 'place',
     },
   ],
   emailToken: {

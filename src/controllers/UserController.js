@@ -39,6 +39,23 @@ const UserController = {
       return next(err);
     }
   },
+  async getMyself(req, res, next) {
+    try {
+      const user = await DB.User.findById(req.user._id).populate(
+        'favouritePlaces',
+      );
+      if (!user) {
+        Logger.error('User was not found');
+        return res.status(404).send('User not found');
+      }
+      // Redis
+      // Redis.cache.set_Specific_Data(req, JSON.stringify(user), next);
+      return res.status(200).send(user);
+    } catch (err) {
+      Logger.error(err);
+      return next(err);
+    }
+  },
   async updateUser(req, res, next) {
     try {
       if (req.body.newPassword) {
