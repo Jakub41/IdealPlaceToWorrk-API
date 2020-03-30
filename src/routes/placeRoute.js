@@ -33,4 +33,9 @@ export default (app) => {
     '/placesInSpecificCity',
     Controller.PlaceCtrl.findPlacesForSpecificArea,
   );
+  app.post(
+    '/places/handlefavourites/:placeId',
+    passport.authenticate('jwt'),
+    Controller.PlaceCtrl.removeAddPlacesToFavourite,
+  );
 };

@@ -69,10 +69,6 @@ const PlacesController = {
       const userId = req.user._id.toString();
       const incomingData = req.body;
       if (placeData.userId === userId) {
-        // ignore these codes
-        // for(props in incomingData){
-        //     placeData[props] = incomingData[props]
-        // }
         const updatedPlace = await DB.Place.findByIdAndUpdate(
           req.params.placeId,
           incomingData,
@@ -153,6 +149,33 @@ const PlacesController = {
       }
       Logger.info('List of places.ok');
       return res.status(200).send(places);
+    } catch (err) {
+      Logger.error(err);
+      return next(err);
+    }
+  },
+  async removeAddPlacesToFavourite(req, res, next) {
+    try {
+      // eslint-disable-next-line no-underscore-dangle
+      const user = await DB.User.findById(req.user._id);
+      if (user) {
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < user.favouritePlaces.length; i++) {
+          if (user.favouritePlaces[i].toString() === req.params.placeId) {
+            user.favouritePlaces.splice(i, 1);
+            user.save();
+            Logger.info('Place was removed from favourites');
+            return res.status(200).send(user);
+          }
+        }
+        user.favouritePlaces.push(req.params.placeId);
+        user.save();
+        Logger.info('Place was added to favourites');
+        return res.status(200).send(user);
+      }
+      // eslint-disable-next-line max-len
+      Logger.info('User was not found. Unauthorized');
+      return res.status(404).send('User was not found. Unauthorized');
     } catch (err) {
       Logger.error(err);
       return next(err);
