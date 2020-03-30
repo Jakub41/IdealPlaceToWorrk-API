@@ -11,6 +11,11 @@ export default (app) => {
 
   app.get('/users', Redis.cache.get_All, Controller.UserCtrl.getAllUsers);
   app.get(
+    '/users/me',
+    passport.authenticate('jwt'),
+    Controller.UserCtrl.getMyself,
+  );
+  app.get(
     '/users/:userId',
     Redis.cache.get_Specific_Data,
     Controller.UserCtrl.getSpecificUser,
