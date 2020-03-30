@@ -1,6 +1,9 @@
 import mongoose from 'mongoose';
 import passportLocalMongoose from 'passport-local-mongoose';
+import validator from 'validator';
+import { Capitalize } from '../helpers';
 // import m2s from 'mongoose-to-swagger';
+// => Use this to output in console the model structure check the bottom of thr file
 
 const userSchema = new mongoose.Schema({
   // for now username will be equal to email (if user registered by email) later on i suppose we
@@ -9,8 +12,14 @@ const userSchema = new mongoose.Schema({
 
   username: {
     type: String,
+    trim: true,
+    lowercase: true,
     required: true,
     unique: true,
+    validate: {
+      validator: (string) => validator.isEmail(string),
+      message: 'Provided email is invalid',
+    },
   },
   picture: {
     type: String,
@@ -20,10 +29,12 @@ const userSchema = new mongoose.Schema({
   },
   firstname: {
     type: String,
+    set: Capitalize,
     required: true,
   },
   lastname: {
     type: String,
+    set: Capitalize,
     required: true,
   },
   favouritePlaces: [
