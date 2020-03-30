@@ -46,6 +46,8 @@ const addPlaceToDb = async (placeId) => {
       RateAverage: fullInfoFronGoogleApi.result.rating,
       IsReferencedOnGoogle: true,
       GoogleId: placeId,
+      // Fields not google
+      Wifi: false,
       // timaestamps instead of handwritting
       createdAt: new Date(),
       updatedAt: new Date(),
