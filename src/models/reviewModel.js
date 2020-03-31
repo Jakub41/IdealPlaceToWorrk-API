@@ -21,26 +21,40 @@ const reviewSchema = new mongoose.Schema({
   Rating: {
     type: Number,
     required: true,
+    default: 0,
+    min: 0,
+    max: 5,
   },
   GoodService: {
     type: Number,
-    required: false,
+    required: true,
+    default: 0,
+    min: 0,
+    max: 5,
   },
   WifiRate: {
     type: Number,
-    required: false,
+    required: true,
+    default: 0,
+    min: 0,
+    max: 5,
   },
   QuitePlace: {
     type: Number,
-    required: false,
+    required: true,
+    default: 0,
+    min: 0,
+    max: 5,
   },
   createdAt: {
     type: Date,
     required: true,
+    default: Date,
   },
   updatedAt: {
     type: Date,
     required: true,
+    default: Date,
   },
 });
 

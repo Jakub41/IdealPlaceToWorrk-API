@@ -1,3 +1,4 @@
+/* eslint-disable operator-linebreak */
 import Logger from '../loaders/logger';
 // eslint-disable-next-line import/named
 import DB from '../models';
@@ -51,17 +52,43 @@ const ReviewsController = {
       // RateAverage, GoodService, WifiRate,  QuitePlace
       const review = await DB.Review.create(incomingData);
       if (review) {
+        console.log(review);
         const place = await DB.Place.findByIdAndUpdate(
           req.params.placeId,
           {
             $push: { Reviews: review },
-            RateAverage: (this.RateAverage + review.Rating) / 2,
-            GoodService: (this.GoodService + review.GoodService) / 2,
-            QuitePlace: (this.QuitePlace + review.QuitePlace) / 2,
-            WifiRate: (this.WifiRate + review.WifiRate) / 2,
+            // RateAverage: (this.RateAverage + review.Rating) / 2,
+            // GoodService: (this.GoodService + review.GoodService) / 2,
+            // QuitePlace: (this.QuitePlace + review.QuitePlace) / 2,
+            // WifiRate: (this.WifiRate + review.WifiRate) / 2,
+            // $avg: { $sum: [4, review.Rating] },
           },
           { new: true },
         );
+
+        place.RateAverage =
+          place.RateAverage === 0
+            ? review.Rating
+            : (place.RateAverage + review.Rating) / 2;
+
+        place.GoodService =
+          place.GoodService === 0
+            ? review.GoodService
+            : (place.GoodService + review.GoodService) / 2;
+
+        place.QuitePlace =
+          place.QuitePlace === 0
+            ? review.QuitePlace
+            : (place.QuitePlace + review.QuitePlace) / 2;
+
+        place.WifiRate =
+          place.WifiRate === 0
+            ? review.WifiRate
+            : (place.WifiRate + review.WifiRate) / 2;
+
+        place.save();
+
+        console.log(place);
         if (place) {
           return res.status(200).send('Everything was updated successfully');
         }
