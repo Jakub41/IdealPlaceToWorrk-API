@@ -70,18 +70,30 @@ const placeSchema = new mongoose.Schema({
       Rating: {
         type: Number,
         required: true,
+        default: 0,
+        min: 0,
+        max: 5,
       },
       GoodService: {
         type: Number,
-        required: false,
+        required: true,
+        default: 0,
+        min: 0,
+        max: 5,
       },
       WifiRate: {
         type: Number,
-        required: false,
+        required: true,
+        default: 0,
+        min: 0,
+        max: 5,
       },
       QuitePlace: {
         type: Number,
-        required: false,
+        required: true,
+        default: 0,
+        min: 0,
+        max: 5,
       },
     },
   ],
@@ -91,24 +103,31 @@ const placeSchema = new mongoose.Schema({
   },
   Wifi: {
     type: Boolean,
-    required: false,
+    required: true,
+    default: false,
   },
+  // Avg values down
   RateAverage: {
     type: Number,
-    required: false,
+    required: true,
+    default: 0,
   },
   GoodService: {
     type: Number,
-    required: false,
+    required: true,
+    default: 0,
   },
   WifiRate: {
     type: Number,
-    required: false,
+    required: true,
+    default: 0,
   },
   QuitePlace: {
     type: Number,
-    required: false,
+    required: true,
+    default: 0,
   },
+  // --------------
   IsReferencedOnGoogle: {
     type: Boolean,
     required: true,
