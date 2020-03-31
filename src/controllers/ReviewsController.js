@@ -57,11 +57,6 @@ const ReviewsController = {
           req.params.placeId,
           {
             $push: { Reviews: review },
-            // RateAverage: (this.RateAverage + review.Rating) / 2,
-            // GoodService: (this.GoodService + review.GoodService) / 2,
-            // QuitePlace: (this.QuitePlace + review.QuitePlace) / 2,
-            // WifiRate: (this.WifiRate + review.WifiRate) / 2,
-            // $avg: { $sum: [4, review.Rating] },
           },
           { new: true },
         );
