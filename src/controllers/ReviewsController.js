@@ -2,6 +2,7 @@
 import Logger from '../loaders/logger';
 // eslint-disable-next-line import/named
 import DB from '../models';
+import { AvgCalc } from '../helpers';
 
 const ReviewsController = {
   async getAllReviews(req, res, next) {
@@ -52,7 +53,6 @@ const ReviewsController = {
       // RateAverage, GoodService, WifiRate,  QuitePlace
       const review = await DB.Review.create(incomingData);
       if (review) {
-        console.log(review);
         const place = await DB.Place.findByIdAndUpdate(
           req.params.placeId,
           {
@@ -66,35 +66,25 @@ const ReviewsController = {
           { new: true },
         );
 
-        place.RateAverage =
-          place.RateAverage === 0
-            ? review.Rating
-            : (place.RateAverage + review.Rating) / 2;
+        place.RateAverage = await AvgCalc(review.Rating, place.RateAverage);
 
-        place.GoodService =
-          place.GoodService === 0
-            ? review.GoodService
-            : (place.GoodService + review.GoodService) / 2;
+        place.GoodService = await AvgCalc(
+          review.GoodService,
+          place.GoodService,
+        );
 
-        place.QuitePlace =
-          place.QuitePlace === 0
-            ? review.QuitePlace
-            : (place.QuitePlace + review.QuitePlace) / 2;
+        place.QuitePlace = await AvgCalc(review.QuitePlace, place.QuitePlace);
 
-        place.WifiRate =
-          place.WifiRate === 0
-            ? review.WifiRate
-            : (place.WifiRate + review.WifiRate) / 2;
+        place.WifiRate = await AvgCalc(review.WifiRate, place.WifiRate);
 
         place.save();
 
-        console.log(place);
         if (place) {
           return res.status(200).send('Everything was updated successfully');
         }
         return res.status(500).send('Places was not updated');
       }
-      return res.status(404).json('Not authorised');
+      return res.status(404).json('Not authorized');
     } catch (err) {
       Logger.error(err);
       return next(err);
