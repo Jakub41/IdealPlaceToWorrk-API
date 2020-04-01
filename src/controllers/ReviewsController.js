@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable operator-linebreak */
 import Logger from '../loaders/logger';
 // eslint-disable-next-line import/named
@@ -88,10 +89,10 @@ const ReviewsController = {
   async updateReview(req, res, next) {
     try {
       // eslint-disable-next-line no-underscore-dangle
-      const userId = req.user._id.toString();
+      const userId = req.user._id;
       const reviewData = await DB.Review.findById(req.params.reviewId);
       const incomingData = req.body;
-      if (reviewData.UserId === userId) {
+      if (reviewData.UserId.equals(userId)) {
         const update = await DB.Review.findByIdAndUpdate(
           req.params.reviewId,
           incomingData,
