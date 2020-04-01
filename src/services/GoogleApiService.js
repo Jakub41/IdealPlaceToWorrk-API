@@ -10,6 +10,7 @@ import { googleApi } from '../config/index';
 const checkPlaceInOurDBAndAddIfNeeded = async (name) => {
   try {
     const googlePlacesRespone = await fetch(
+      // findplacefromtext
       `https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=${googleApi.key}&input=${name}&inputtype=textquery`,
     );
     const googlePlaces = await googlePlacesRespone.json();
@@ -32,7 +33,7 @@ const checkPlaceInOurDBAndAddIfNeeded = async (name) => {
     Logger.error(err);
   }
 };
-// https://maps.googleapis.com/maps/api/place/textsearch/json?query=cowork+cafe+in+'Berlin'&key=AIzaSyDlkDftixlz_nvsxuPi0flAOP_0Cc6poBE
+// https://maps.googleapis.com/maps/api/place/textsearch/json?query=cowork+cafe+in+'Berlin'&key
 
 // eslint-disable-next-line consistent-return
 const checkPlacesOfSpecifcCityInDBOrAddToOurDb = async (location) => {
