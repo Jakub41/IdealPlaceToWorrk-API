@@ -1,6 +1,9 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable operator-linebreak */
 import Logger from '../loaders/logger';
 // eslint-disable-next-line import/named
 import DB from '../models';
+import { AvgCalc } from '../helpers';
 
 const ReviewsController = {
   async getAllReviews(req, res, next) {
@@ -55,19 +58,29 @@ const ReviewsController = {
           req.params.placeId,
           {
             $push: { Reviews: review },
-            RateAverage: (this.RateAverage + review.Rating) / 2,
-            GoodService: (this.GoodService + review.GoodService) / 2,
-            QuitePlace: (this.QuitePlace + review.QuitePlace) / 2,
-            WifiRate: (this.WifiRate + review.WifiRate) / 2,
           },
           { new: true },
         );
+
+        place.RateAverage = await AvgCalc(review.Rating, place.RateAverage);
+
+        place.GoodService = await AvgCalc(
+          review.GoodService,
+          place.GoodService,
+        );
+
+        place.QuitePlace = await AvgCalc(review.QuitePlace, place.QuitePlace);
+
+        place.WifiRate = await AvgCalc(review.WifiRate, place.WifiRate);
+
+        place.save();
+
         if (place) {
           return res.status(200).send('Everything was updated successfully');
         }
         return res.status(500).send('Places was not updated');
       }
-      return res.status(404).json('Not authorised');
+      return res.status(404).json('Not authorized');
     } catch (err) {
       Logger.error(err);
       return next(err);
@@ -76,10 +89,10 @@ const ReviewsController = {
   async updateReview(req, res, next) {
     try {
       // eslint-disable-next-line no-underscore-dangle
-      const userId = req.user._id.toString();
+      const userId = req.user._id;
       const reviewData = await DB.Review.findById(req.params.reviewId);
       const incomingData = req.body;
-      if (reviewData.UserId === userId) {
+      if (reviewData.UserId.equals(userId)) {
         const update = await DB.Review.findByIdAndUpdate(
           req.params.reviewId,
           incomingData,
