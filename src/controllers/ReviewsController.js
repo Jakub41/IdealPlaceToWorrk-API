@@ -89,21 +89,94 @@ const ReviewsController = {
   async updateReview(req, res, next) {
     try {
       // eslint-disable-next-line no-underscore-dangle
-      const userId = req.user._id;
-      const reviewData = await DB.Review.findById(req.params.reviewId);
+      const { placeId, reviewId } = req.params;
+      const userId = req.user._id.toString();
+      const reviewData = await DB.Review.findById(reviewId);
       const incomingData = req.body;
+      const updateRating = {};
+
       if (reviewData.UserId.equals(userId)) {
         const update = await DB.Review.findByIdAndUpdate(
-          req.params.reviewId,
+          reviewId,
           incomingData,
           { new: true },
         );
-        if (update) {
-          return res.status(200).json(update);
+
+        // update place's Review[] first
+        const updatePlaceRating = await DB.Place.updateOne(
+          {
+            Reviews: {
+              $elemMatch: {
+                _id: reviewId,
+              },
+            },
+          },
+          {
+            $set: {
+              'Reviews.$.Rating': incomingData.Rating,
+              'Reviews.$.GoodService': incomingData.GoodService,
+              'Reviews.$.QuitePlace': incomingData.QuitePlace,
+              'Reviews.$.WifiRate': incomingData.WifiRate,
+              'Reviews.$.Text': incomingData.Text,
+            },
+          },
+        );
+
+        const updatedPlaceData = await DB.Place.findById(placeId);
+        const updatedReviewData = updatedPlaceData.Reviews;
+
+        let rateAverage = 0;
+        let goodService = 0;
+        let quitePlace = 0;
+        let wifiRate = 0;
+
+        for (let i = 0; i < updatedReviewData.length; i += 1) {
+          rateAverage += updatedReviewData[i].Rating;
+          goodService += updatedReviewData[i].GoodService;
+          quitePlace += updatedReviewData[i].QuitePlace;
+          wifiRate += updatedReviewData[i].WifiRate;
         }
-        return res.status(404).json('review not found');
+
+        // calculate now place params
+        updateRating.RateAverage =
+          updatedReviewData.length > 0
+            ? Math.floor((rateAverage / updatedReviewData.length) * 100) / 100
+            : 0;
+
+        updateRating.GoodService =
+          updatedReviewData.length > 0
+            ? Math.floor((goodService / updatedReviewData.length) * 100) / 100
+            : 0;
+
+        updateRating.QuitePlace =
+          updatedReviewData.length > 0
+            ? Math.floor((quitePlace / updatedReviewData.length) * 100) / 100
+            : 0;
+
+        updateRating.WifiRate =
+          updatedReviewData.length > 0
+            ? Math.floor((wifiRate / updatedReviewData.length) * 100) / 100
+            : 0;
+
+        updateRating.Text = incomingData.Text;
+
+        // Now update place params for rating
+        const updatePlace = await DB.Place.findByIdAndUpdate(
+          placeId,
+          updateRating,
+          { new: true },
+        );
+
+        if (!updatePlaceRating || !updatePlace || !update) {
+          Logger.error('Update error');
+          return res.status(500).json('Update error');
+        }
+
+        Logger.info('Update success');
+        return res.status(200).json(update);
       }
-      return res.status(404).json('Not authorised');
+      Logger.error('Not authorized');
+      return res.status(404).json('Not authorized');
     } catch (err) {
       Logger.error(err);
       return next(err);
@@ -114,7 +187,7 @@ const ReviewsController = {
       // eslint-disable-next-line no-underscore-dangle
       const userId = req.user._id.toString();
       const review = await DB.Review.findById(req.params.reviewId);
-      if (review.userId === userId) {
+      if (review.UserId.equals(userId)) {
         const removed = await DB.Review.findByIdAndRemove(req.params.reviewId);
         await DB.Place.findByIdAndUpdate(req.params.placeId, {
           $pull: { Reviews: { _id: req.params.reviewId } },

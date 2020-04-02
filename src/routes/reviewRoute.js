@@ -23,12 +23,12 @@ export default (app) => {
     Controller.ReviewCtrl.postNewReview,
   );
   app.patch(
-    '/reviews/:reviewId',
+    '/reviews/:placeId/:reviewId',
     passport.authenticate('jwt'),
     Controller.ReviewCtrl.updateReview,
   );
   app.delete(
-    '/reviews/:reviewId/:placeId',
+    '/reviews/:placeId/:reviewId',
     passport.authenticate('jwt'),
     Controller.ReviewCtrl.deleteReview,
   );
