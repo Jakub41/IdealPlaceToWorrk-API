@@ -1,14 +1,11 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 // import m2s from 'mongoose-to-swagger';
 
 const reviewSchema = new mongoose.Schema({
-  Author: {
-    type: String,
-    required: true,
-  },
   UserId: {
-    type: mongoose.Types.ObjectId,
-    reference: 'user',
+    type: Schema.Types.ObjectId,
+    ref: 'user',
   },
   PlaceId: {
     type: mongoose.Types.ObjectId,
