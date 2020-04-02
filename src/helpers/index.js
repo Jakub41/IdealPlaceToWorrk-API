@@ -5,3 +5,4 @@ export { default as JsonOut } from './jsonOutHelper';
 export { default as Capitalize } from './CapitalizeHelper';
 export { default as FilterPlaces } from './FilterPlacesHelper';
 export { default as AvgCalc } from './AvgCalcHelper';
+export { default as Filter } from './FilterHelper';
