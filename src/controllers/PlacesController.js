@@ -5,64 +5,28 @@
 import DB from '../models/index';
 import Logger from '../loaders/logger';
 import Service from '../services/index';
+import { Filter } from '../helpers';
+// import { googleApi } from '../config/index';
+
+// basic route for places done (all we have to do is to add filtering option)
 
 const PlacesController = {
   async getAll(req, res, next) {
     try {
-      // Declaring const
-      const match = {};
-      const sort = {};
-
-      let places = [];
-      let total = 0;
-
-      // eslint-disable-next-line object-curly-newline
-      // Query const
-      const { wifi, limit, sortBy, OrderBy, skip } = req.query;
-
-      // Wifi in query we filter only places with WiFi === True
-      if (wifi) {
-        Logger.info('WiFI', wifi);
-        match.Wifi = wifi === 'true';
-      }
-
-      // We can sortBy or OrderBy => sortBy = Nam || OrderBy = desc
-      if (sortBy || OrderBy) {
-        Logger.info('Sorting');
-        sort[sortBy] = OrderBy === 'desc' ? -1 : 1;
-      }
-
-      // If any of above are passed as query the find process it otherwise
-      // the result is the list of the Places without any query params
-      places = await DB.Place.find(
-        match, // key to filter
-        (err, doc) =>
-          // Logger.error(err);
-          doc,
-      )
-        .limit(parseInt(limit)) // limit result per pag
-        .skip(parseInt(skip)) // skip results
-        .sort(sort); // sort results
-
-      /**
-       * !Wifi — This is set to true, and we will get the wifi places only
-       * !limit & skip — Both the values are set to 2,
-       * !we will iterate up to the second page with 2 records if we have any
-       * !sortBy — This is set to createdAt. The field on which the sorting will be performed
-       * !OrderBy — This is set to desc. It will sort posts in descending order.
-       */
-
-      // counting array length for future pagination
-      total = await DB.Place.find(
-        match, // key to filter
-        (err, doc) =>
-          // Logger.error(err);
-          doc,
+      const places = await Filter.filter(req, 'places').then(
+        (response) => response,
       );
-
       if (places) {
+        Logger.info('Places found');
+
+        let total = 0;
+
+        // counting array length for future pagination
+        total = await DB.Place.find({});
+
         return res.status(200).json({ places, total: total.length });
       }
+      Logger.error('Places not found');
       return res.status(404).json('places not found');
     } catch (err) {
       Logger.error(err);
