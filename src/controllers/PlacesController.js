@@ -18,12 +18,6 @@ const PlacesController = {
       );
       if (places) {
         Logger.info('Places found');
-
-        // let total = 0;
-
-        // counting array length for future pagination
-        // total = await DB.Place.find({});
-
         return res.status(200).json(places);
       }
       Logger.error('Places not found');
