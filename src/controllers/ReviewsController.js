@@ -36,9 +36,9 @@ const ReviewsController = {
     try {
       const reviews = await DB.Review.find({
         PlaceId: req.params.placeId,
-      }).populate('UserId');
+      }).populate('UserId._id');
       if (reviews) {
-        return res.status(200).json(reviews);
+        return res.status(200).json({ reviews, total: reviews.length });
       }
       return res.status(404).send('not found');
     } catch (err) {
