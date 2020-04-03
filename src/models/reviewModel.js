@@ -1,10 +1,9 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+import mongoose from 'mongoose';
 // import m2s from 'mongoose-to-swagger';
 
 const reviewSchema = new mongoose.Schema({
   UserId: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Types.ObjectId,
     ref: 'user',
   },
   PlaceId: {
