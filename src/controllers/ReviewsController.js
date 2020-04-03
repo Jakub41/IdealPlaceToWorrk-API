@@ -34,7 +34,9 @@ const ReviewsController = {
   },
   async getReviewForSpecificPlace(req, res, next) {
     try {
-      const reviews = await DB.Review.find({ PlaceId: req.params.placeId });
+      const reviews = await DB.Review.find({
+        PlaceId: req.params.placeId,
+      }).populate('UserId');
       if (reviews) {
         return res.status(200).json(reviews);
       }
