@@ -28,8 +28,8 @@ export default (app) => {
     passport.authenticate('jwt'),
     Controller.PlaceCtrl.deletePlace,
   );
-  app.get('/placesSearch', Controller.PlaceCtrl.findSpecificPlace);
-  app.get(
+  app.post('/placesSearch', Controller.PlaceCtrl.findSpecificPlace);
+  app.post(
     '/placesInSpecificCity',
     Controller.PlaceCtrl.findPlacesForSpecificArea,
   );
