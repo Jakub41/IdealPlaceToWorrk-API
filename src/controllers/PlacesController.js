@@ -24,7 +24,9 @@ const PlacesController = {
         // counting array length for future pagination
         total = await DB.Place.find({});
 
-        return res.status(200).json({ places, total: total.length });
+        return res
+          .status(200)
+          .json({ places, total: total.length, totalFilter: places.length });
       }
       Logger.error('Places not found');
       return res.status(404).json('places not found');

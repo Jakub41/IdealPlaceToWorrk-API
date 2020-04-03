@@ -1,3 +1,4 @@
+/* eslint no-unused-expressions: ["error", { "allowShortCircuit": true, "allowTernary": true }] */
 import DB from '../models/index';
 import Logger from '../loaders/logger';
 
@@ -13,7 +14,8 @@ const filter = async (req, type) => {
   // Wifi in query we filter only places with WiFi === True
   if (wifi) {
     Logger.info('WiFI', wifi);
-    match.Wifi = wifi === 'true';
+    wifi === 'false' ? (match.Wifi = wifi) : (match.Wifi = wifi === 'false');
+    // match.Wifi = wifi === 'true';
   }
 
   // We can sortBy or OrderBy => sortBy = Nam || OrderBy = desc
