@@ -29,7 +29,8 @@ const PlacesController = {
   },
   async getSpecificPlace(req, res, next) {
     try {
-      const place = await DB.Place.findById(req.params.placeId);
+      const place = await DB.Place.findById(req.params.placeId).lean();
+      place.reviewsCount = place.Reviews.length;
       if (place) {
         return res.status(200).json(place);
       }
