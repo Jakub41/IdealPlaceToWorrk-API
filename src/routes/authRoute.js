@@ -19,7 +19,7 @@ export default (app) => {
     passport.authenticate('facebook', {
       failureRedirect: '/api/v1/auth/login',
     }),
-    Controller.AuthCtrl.authRedirect,
+    // Controller.AuthCtrl.authRedirect,
   );
   app.get(
     '/auth/google/callback',
@@ -29,6 +29,7 @@ export default (app) => {
     Controller.AuthCtrl.authRedirect,
   );
   app.post('/auth/register', Controller.AuthCtrl.registerUser);
+  app.post('/auth/facebook', Controller.AuthCtrl.facebookLogin);
   app.post(
     '/auth/login',
     auth.basic,

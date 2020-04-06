@@ -8,6 +8,48 @@ import DB from '../models';
 import Middleware from '../middleware';
 
 const AuthController = {
+  facebookLogin(req, res, next) {
+    console.log(req.body);
+    const email = req.body.profile.email || req.body.auth.userID + '@fbuser.null';
+    const user = {
+      username: email,
+      firstname: req.body.profile.first_name,
+      lastname: req.body.profile.last_name,
+      password: req.body.auth.signedRequest,
+      picture: req.body.profile.picture.data.url,
+      facebookId: req.body.auth.userID,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+    DB.User.findOne({ facebookId: user.facebookId }, (err, fuser) => {
+      console.log(err, fuser);
+      if (err) {
+        res.status(500).send(err);
+        return;
+      }
+      if (!fuser) {
+        DB.User.create(user, (err, cuser) => {
+          if (err) {
+            res.status(500).send(err);
+            return;
+          }
+          const token = auth.getToken({ _id: fuser._id });
+          res.status(200)
+            .send({
+              user: cuser,
+              accessToken: token,
+            });
+        });
+      } else {
+        const token = auth.getToken({ _id: fuser._id });
+        res.status(200)
+          .send({
+            user: user,
+            accessToken: token,
+          });
+      }
+    });
+  },
   async registerUser(req, res, next) {
     try {
       const userSchema = {
@@ -31,7 +73,10 @@ const AuthController = {
         Logger.info('Invalid password', failedRules);
         return res
           .status(400)
-          .json({ msg: 'Password invalid', rules: failedRules });
+          .json({
+            msg: 'Password invalid',
+            rules: failedRules
+          });
       }
 
       const user = await DB.User.register(userSchema, req.body.password);
@@ -62,7 +107,8 @@ const AuthController = {
         Logger.error('Email was not sent. Something went wrong');
       }
       Logger.info('User and token created successfully.');
-      return res.status(200).send({ user });
+      return res.status(200)
+        .send({ user });
     } catch (err) {
       Logger.error(err);
       return next(err);
@@ -79,7 +125,11 @@ const AuthController = {
           .status(401)
           .send('Token was not created. Something went wrong');
       }
-      return res.status(200).send({ user: req.user, accessToken: token });
+      return res.status(200)
+        .send({
+          user: req.user,
+          accessToken: token
+        });
     } catch (err) {
       Logger.error(err);
       return next(err);
@@ -96,7 +146,11 @@ const AuthController = {
           .status(401)
           .send('Token was not created. Something went wrong');
       }
-      return res.status(200).send({ user: req.user, accessToken: token });
+      return res.status(200)
+        .send({
+          user: req.user,
+          accessToken: token
+        });
     } catch (err) {
       Logger.error(err);
       return next(err);
@@ -114,9 +168,14 @@ const AuthController = {
       Logger.info('user');
       if (!user) {
         Logger.error('User was not found. Something went wrong');
-        return res.status(404).send('User was not found. Something went wrong');
+        return res.status(404)
+          .send('User was not found. Something went wrong');
       }
-      return res.status(200).send({ user, accessToken: token });
+      return res.status(200)
+        .send({
+          user,
+          accessToken: token
+        });
     } catch (err) {
       Logger.error(err);
       return next(err);

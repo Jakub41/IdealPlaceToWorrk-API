@@ -4,11 +4,12 @@
         "node": true
     },
     "extends": [
-        "plugin:prettier/recommended",
-        "airbnb-base"
+        // REMOVED ANNOYING RULES PLEASE DO NOT ADD AGAIN
+        //"plugin:prettier/recommended",
+        //"airbnb-base"
     ],
     "plugins": [
-        "prettier"
+        //"prettier"
     ],
     "globals": {
         "Atomics": "readonly",
