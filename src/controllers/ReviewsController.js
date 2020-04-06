@@ -3,12 +3,12 @@
 import Logger from '../loaders/logger';
 // eslint-disable-next-line import/named
 import DB from '../models';
-import { AvgCalc, Filter } from '../helpers';
+import { AvgCalc, FilterHelper } from '../helpers';
 
 const ReviewsController = {
   async getAllReviews(req, res, next) {
     try {
-      const reviews = await Filter.filter(req, 'reviews').then(
+      const reviews = await FilterHelper.filter(req, 'reviews').then(
         (response) => response,
       );
       if (reviews) {
