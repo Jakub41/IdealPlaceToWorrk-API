@@ -1,10 +1,11 @@
+/* eslint-disable operator-linebreak */
 import DB from '../models/index';
 import Logger from '../loaders/logger';
 
 const filter = async (req, type) => {
   const match = {};
   const sort = {};
-  let listOfObjects = [];
+  const listOfObjects = {};
   // eslint-disable-next-line object-curly-newline
   // Query const
   // eslint-disable-next-line object-curly-newline
@@ -13,6 +14,10 @@ const filter = async (req, type) => {
   // Wifi in query we filter only places with WiFi === True
   if (wifi) {
     Logger.info('WiFI', wifi);
+    if (wifi === false) {
+      match.Wifi = wifi === 'false';
+    }
+
     match.Wifi = wifi === 'true';
   }
 
@@ -23,20 +28,36 @@ const filter = async (req, type) => {
   }
   Logger.info(JSON.stringify(sort));
   if (type === 'places') {
-    listOfObjects = await DB.Place.find(match)
+    listOfObjects.result = await DB.Place.find(match)
       .limit(parseInt(limit, 10)) // limit result per pag => 10 a radix validator
       .skip(parseInt(skip, 10)) // skip results
-      .sort(sort); // sort results
+      .sort(sort)
+      .lean();
+
+    listOfObjects.result.forEach((obj, index) => {
+      if (obj.Reviews) {
+        listOfObjects.result[index].reviewsCount =
+          listOfObjects.result[index].Reviews.length;
+      } else {
+        listOfObjects.result[index].reviewsCount = 0;
+      }
+    });
+    listOfObjects.total = await DB.Place.find({}).countDocuments();
+    listOfObjects.totalWifi = await DB.Place.find({
+      Wifi: true,
+    }).countDocuments();
   } else if (type === 'users') {
-    listOfObjects = await DB.User.find(match)
+    listOfObjects.results = await DB.User.find(match)
       .limit(parseInt(limit, 10)) // limit result per pag
       .skip(parseInt(skip, 10)) // skip results
       .sort(sort); // sort results
+    listOfObjects.total = await DB.User.find({}).countDocuments();
   } else if (type === 'reviews') {
-    listOfObjects = await DB.Review.find(match)
+    listOfObjects.results = await DB.Review.find(match)
       .limit(parseInt(limit, 10)) // limit result per pag
       .skip(parseInt(skip, 10)) // skip results
       .sort(sort); // sort results
+    listOfObjects.total = await DB.Review.find({}).countDocuments();
   }
   /**
    * !Wifi — This is set to true, and we will get the wifi places only

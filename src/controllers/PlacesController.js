@@ -18,13 +18,7 @@ const PlacesController = {
       );
       if (places) {
         Logger.info('Places found');
-
-        let total = 0;
-
-        // counting array length for future pagination
-        total = await DB.Place.find({});
-
-        return res.status(200).json({ places, total: total.length });
+        return res.status(200).json(places);
       }
       Logger.error('Places not found');
       return res.status(404).json('places not found');
@@ -35,7 +29,8 @@ const PlacesController = {
   },
   async getSpecificPlace(req, res, next) {
     try {
-      const place = await DB.Place.findById(req.params.placeId);
+      const place = await DB.Place.findById(req.params.placeId).lean();
+      place.reviewsCount = place.Reviews.length;
       if (place) {
         return res.status(200).json(place);
       }
