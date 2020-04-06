@@ -52,6 +52,7 @@ const ReviewsController = {
       const userId = req.user._id.toString();
       const incomingData = {
         ...req.body,
+        Author: `${req.user.firstname} ${req.user.lastname}`,
         UserId: userId,
         PlaceId: req.params.placeId,
       };

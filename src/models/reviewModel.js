@@ -2,6 +2,10 @@ import mongoose from 'mongoose';
 // import m2s from 'mongoose-to-swagger';
 
 const reviewSchema = new mongoose.Schema({
+  Author: {
+    type: String,
+    required: true,
+  },
   UserId: {
     type: mongoose.Types.ObjectId,
     ref: 'user',
