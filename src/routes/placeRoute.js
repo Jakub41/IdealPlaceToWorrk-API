@@ -13,6 +13,9 @@ export default (app) => {
 
   app.get('/places', Controller.PlaceCtrl.getAll);
   app.get('/places/:placeId', Controller.PlaceCtrl.getSpecificPlace);
+
+  app.get('/places/ratings/:placeId', Controller.PlaceCtrl.getPlaceRatings);
+
   app.post(
     '/places',
     passport.authenticate('jwt'),
