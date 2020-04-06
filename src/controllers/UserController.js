@@ -2,7 +2,7 @@
 import Logger from '../loaders/logger';
 import Redis from '../middleware';
 import Service from '../services/index';
-import { Filter } from '../helpers';
+import { FilterHelper } from '../helpers';
 
 // eslint-disable-next-line import/named
 import DB from '../models';
@@ -11,7 +11,7 @@ const UserController = {
   async getAllUsers(req, res, next) {
     try {
       // const users = await DB.User.find({});
-      const users = await Filter.filter(req, 'users').then(
+      const users = await FilterHelper.filter(req, 'users').then(
         (response) => response,
       );
       if (!users) {

@@ -1,11 +1,8 @@
-/* eslint-disable object-curly-newline */
-/* eslint-disable comma-dangle */
-/* eslint-disable radix */
-/* eslint-disable implicit-arrow-linebreak */
+import geoip from 'geoip-lite';
 import DB from '../models/index';
 import Logger from '../loaders/logger';
 import Service from '../services/index';
-import { Filter } from '../helpers';
+import { FilterHelper, RatingHelper } from '../helpers';
 // import { googleApi } from '../config/index';
 
 // basic route for places done (all we have to do is to add filtering option)
@@ -13,15 +10,26 @@ import { Filter } from '../helpers';
 const PlacesController = {
   async getAll(req, res, next) {
     try {
-      const places = await Filter.filter(req, 'places').then(
+      const places = await FilterHelper.filter(req, 'places').then(
         (response) => response,
-      );
+      ); // await DB.Place.find({});
       if (places) {
-        Logger.info('Places found');
         return res.status(200).json(places);
       }
-      Logger.error('Places not found');
       return res.status(404).json('places not found');
+    } catch (err) {
+      Logger.error(err);
+      return next(err);
+    }
+  },
+
+  async getPlaceRatings(req, res, next) {
+    try {
+      const Rating = await RatingHelper.rating(req.params.placeId);
+      if (Rating) {
+        return res.status(200).json(Rating);
+      }
+      return res.status(404).json('No Reviews for this place found');
     } catch (err) {
       Logger.error(err);
       return next(err);
@@ -115,30 +123,22 @@ const PlacesController = {
   },
   async findSpecificPlace(req, res, next) {
     try {
+      console.log(req.body);
       const placesFromGoogle = await Service.GoogleService.checkPlaceInOurDBAndAddIfNeeded(
         req.body.searchQuery,
-        req.body.latitude,
-        req.body.longitude,
       );
       let places = [];
-      let total = 0;
-      const { limit, skip } = req.query;
       if (placesFromGoogle || placesFromGoogle === null) {
         places = await DB.Place.find({
-          Name: { $regex: new RegExp(req.body.searchQuery, 'i') },
-        })
-          .limit(parseInt(limit)) // limit result per pag
-          .skip(parseInt(skip)); // skip results;
-        total = await DB.Place.find({
           Name: { $regex: new RegExp(req.body.searchQuery, 'i') },
         });
       }
       if (places.length === 0) {
         Logger.error('Nothing was found');
-        return res.status(404).send('Nothing was found');
+        return res.status(404).send('Nothing was found1');
       }
       Logger.info('List of places.ok');
-      return res.status(200).send({ places, total: total.length });
+      return res.status(200).send(places);
     } catch (err) {
       Logger.error(err);
       return next(err);
@@ -146,23 +146,19 @@ const PlacesController = {
   },
   async findPlacesForSpecificArea(req, res, next) {
     try {
+      // i'm using hardcoded ip cause i can't get my public ip lol but this info should be
+      // in req.ip after we won't be using localhost
+      const geo = geoip.lookup('2a02:a318:8240:6200:45b2:79d6:3bb5:9665');
+      const location = geo.city;
+      Logger.info(location);
       // eslint-disable-next-line max-len
       const placesFromGoogle = await Service.GoogleService.checkPlacesOfSpecifcCityInDBOrAddToOurDb(
-        req.body.latitude,
-        req.body.longitude,
-        '',
+        'Berlin',
       );
-      const { limit, skip } = req.query;
       let places = [];
-      let total = 0;
       if (placesFromGoogle || placesFromGoogle === null) {
         places = await DB.Place.find({
-          Location: { $regex: new RegExp(req.body.city) },
-        })
-          .limit(parseInt(limit)) // limit result per pag
-          .skip(parseInt(skip)); // skip results;
-        total = await DB.Place.find({
-          Location: { $regex: new RegExp(req.body.city) },
+          Location: { $regex: new RegExp('Berlin', 'i') },
         });
       }
       if (places.length === 0) {
@@ -170,7 +166,7 @@ const PlacesController = {
         return res.status(404).send('Nothing was found');
       }
       Logger.info('List of places.ok');
-      return res.status(200).send({ places, total: total.length });
+      return res.status(200).send(places);
     } catch (err) {
       Logger.error(err);
       return next(err);
