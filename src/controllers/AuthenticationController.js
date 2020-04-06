@@ -8,9 +8,11 @@ import DB from '../models';
 import Middleware from '../middleware';
 
 const AuthController = {
+  // new Facebook login without passportjs
   facebookLogin(req, res, next) {
-    console.log(req.body);
+    // get user's email or use a fake one in case the user registered using a phone number
     const email = req.body.profile.email || req.body.auth.userID + '@fbuser.null';
+    // create the user object mapping the data coming from FE
     const user = {
       username: email,
       firstname: req.body.profile.first_name,
@@ -21,18 +23,20 @@ const AuthController = {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
+    // Look if the user already exists
     DB.User.findOne({ facebookId: user.facebookId }, (err, fuser) => {
-      console.log(err, fuser);
       if (err) {
         res.status(500).send(err);
         return;
       }
       if (!fuser) {
+        // if the user doesn't exist create a new user
         DB.User.create(user, (err, cuser) => {
           if (err) {
             res.status(500).send(err);
             return;
           }
+          // generate a token for the user
           const token = auth.getToken({ _id: fuser._id });
           res.status(200)
             .send({
@@ -41,6 +45,7 @@ const AuthController = {
             });
         });
       } else {
+        // if the user already exists then generate a token and send to FE
         const token = auth.getToken({ _id: fuser._id });
         res.status(200)
           .send({
