@@ -193,10 +193,63 @@ const ReviewsController = {
       const review = await DB.Review.findById(req.params.reviewId);
       if (review.UserId.equals(userId)) {
         const removed = await DB.Review.findByIdAndRemove(req.params.reviewId);
-        await DB.Place.findByIdAndUpdate(req.params.placeId, {
-          $pull: { Reviews: { _id: req.params.reviewId } },
-        });
-        if (removed) {
+
+        // update place's Review[] first
+        const removePlaceRating = await DB.Place.updateOne(
+          {
+            Reviews: {
+              $elemMatch: {
+                _id: req.params.reviewId,
+              },
+            },
+          },
+          {
+            $pull: { Reviews: { _id: req.params.reviewId } },
+          },
+        );
+
+        const updatedPlaceData = await DB.Place.findById(req.params.placeId);
+        const updatedReviewData = updatedPlaceData.Reviews;
+        let rateAverage = 0;
+        let goodService = 0;
+        let quitePlace = 0;
+        let wifiRate = 0;
+        for (let i = 0; i < updatedReviewData.length; i += 1) {
+          rateAverage += updatedReviewData[i].Rating;
+          goodService += updatedReviewData[i].GoodService;
+          quitePlace += updatedReviewData[i].QuitePlace;
+          wifiRate += updatedReviewData[i].WifiRate;
+        }
+        const updateRating = {};
+        // calculate now place params
+        updateRating.RateAverage =
+          updatedReviewData.length > 0
+            ? rateAverage / updatedReviewData.length
+            : 0;
+
+        updateRating.GoodService =
+          updatedReviewData.length > 0
+            ? goodService / updatedReviewData.length
+            : 0;
+
+        updateRating.QuitePlace =
+          updatedReviewData.length > 0
+            ? quitePlace / updatedReviewData.length
+            : 0;
+
+        updateRating.WifiRate =
+          updatedReviewData.length > 0
+            ? wifiRate / updatedReviewData.length
+            : 0;
+
+        // Now update place params for rating
+        const updatePlace = await DB.Place.findByIdAndUpdate(
+          req.params.placeId,
+          updateRating,
+          { new: true },
+        );
+
+        if (removed && removePlaceRating && updatePlace) {
           return res.status(200).json('Removed');
         }
         return res.status(404).json('Review not found');
