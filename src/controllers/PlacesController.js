@@ -193,6 +193,7 @@ const PlacesController = {
         req.body.longitude,
         '',
       );
+      // test
       const { limit, skip } = req.query;
       let places = [];
       let total = 0;
