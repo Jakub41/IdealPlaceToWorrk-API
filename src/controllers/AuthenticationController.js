@@ -37,7 +37,7 @@ const AuthController = {
             return;
           }
           // generate a token for the user
-          const token = auth.getToken({ _id: fuser._id });
+          const token = auth.getToken({ _id: cuser._id });
           res.status(200)
             .send({
               user: cuser,
