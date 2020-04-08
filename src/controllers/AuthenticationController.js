@@ -168,19 +168,18 @@ const AuthController = {
         user.active = true;
         user.save();
       }
-      // eslint-disable-next-line no-underscore-dangle
-      const token = auth.getToken({ _id: user._id });
-      Logger.info('user');
-      if (!user) {
-        Logger.error('User was not found. Something went wrong');
-        return res.status(404)
-          .send('User was not found. Something went wrong');
-      }
-      return res.status(200)
-        .send({
-          user,
-          accessToken: token
-        });
+        const token = auth.getToken({ _id: user._id });
+        Logger.info('user');
+        if (!user) {
+          Logger.error('User was not found. Something went wrong');
+          return res.status(404)
+            .send('User was not found. Something went wrong');
+        }
+        return res.status(200)
+          .send({
+            user,
+            accessToken: token
+          });
     } catch (err) {
       Logger.error(err);
       return next(err);
