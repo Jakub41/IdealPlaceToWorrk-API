@@ -146,19 +146,24 @@ const PlacesController = {
   },
   async findPlacesForSpecificArea(req, res, next) {
     try {
-      // i'm using hardcoded ip cause i can't get my public ip lol but this info should be
-      // in req.ip after we won't be using localhost
-      const geo = geoip.lookup('2a02:a318:8240:6200:45b2:79d6:3bb5:9665');
-      const location = geo.city;
-      Logger.info(location);
       // eslint-disable-next-line max-len
       const placesFromGoogle = await Service.GoogleService.checkPlacesOfSpecifcCityInDBOrAddToOurDb(
-        'Berlin',
+        req.body.latitude,
+        req.body.longitude,
+        '',
       );
+      // test
+      const { limit, skip } = req.query;
       let places = [];
+      let total = 0;
       if (placesFromGoogle || placesFromGoogle === null) {
         places = await DB.Place.find({
-          Location: { $regex: new RegExp('Berlin', 'i') },
+          Location: { $regex: new RegExp(req.body.city) },
+        })
+          .limit(parseInt(limit)) // limit result per pag
+          .skip(parseInt(skip)); // skip results;
+        total = await DB.Place.find({
+          Location: { $regex: new RegExp(req.body.city) },
         });
       }
       if (places.length === 0) {
@@ -166,7 +171,7 @@ const PlacesController = {
         return res.status(404).send('Nothing was found');
       }
       Logger.info('List of places.ok');
-      return res.status(200).send(places);
+      return res.status(200).send({ places, total: total.length });
     } catch (err) {
       Logger.error(err);
       return next(err);
