@@ -123,22 +123,54 @@ const PlacesController = {
   },
   async findSpecificPlace(req, res, next) {
     try {
-      console.log(req.body);
+      const lat = parseFloat(req.body.latitude);
+      const lnt = parseFloat(req.body.longitude);
       const placesFromGoogle = await Service.GoogleService.checkPlaceInOurDBAndAddIfNeeded(
         req.body.searchQuery,
+        req.body.latitude,
+        req.body.longitude,
       );
       let places = [];
+      let total = 0;
+      const { limit, skip } = req.query;
       if (placesFromGoogle || placesFromGoogle === null) {
         places = await DB.Place.find({
-          Name: { $regex: new RegExp(req.body.searchQuery, 'i') },
-        });
+          Name: { $regex: new RegExp(req.body.searchQuery, 'i')  },
+          Coordinates: {
+            $near: {
+              $geometry : {
+                type : "Point" ,
+                coordinates : [ lat, lnt ] 
+              },
+              $maxDistance: 10000,
+            }
+          }
+        })
+          .limit(parseInt(limit)) // limit result per pag
+          .skip(parseInt(skip)); // skip results;
+
+
+        total = await DB.Place.find(
+          {
+            Name: { $regex: new RegExp(req.body.searchQuery, 'i')  },
+            Coordinates : 
+              { $near :
+                {
+                  $geometry : {
+                      type : "Point" ,
+                      coordinates : [ lat, lnt ] },
+                  $maxDistance : 10000
+                }
+              }
+          }
+        );
       }
       if (places.length === 0) {
         Logger.error('Nothing was found');
-        return res.status(404).send('Nothing was found1');
+        return res.status(404).send('Nothing was found');
       }
       Logger.info('List of places.ok');
-      return res.status(200).send(places);
+      return res.status(200).send({ places, total: total.length });
     } catch (err) {
       Logger.error(err);
       return next(err);
@@ -147,25 +179,48 @@ const PlacesController = {
   async findPlacesForSpecificArea(req, res, next) {
     try {
       // eslint-disable-next-line max-len
+      const lat = parseFloat(req.body.latitude);
+      const lnt = parseFloat(req.body.longitude);
       const placesFromGoogle = await Service.GoogleService.checkPlacesOfSpecifcCityInDBOrAddToOurDb(
         req.body.latitude,
         req.body.longitude,
         '',
       );
-      // test
       const { limit, skip } = req.query;
       let places = [];
       let total = 0;
       if (placesFromGoogle || placesFromGoogle === null) {
         places = await DB.Place.find({
-          Location: { $regex: new RegExp(req.body.city) },
+          Coordinates : 
+          { $near :
+            {
+              $geometry : {
+                type : "Point" ,
+                coordinates : [ lat, lnt ] 
+              },
+              $maxDistance : 10000
+            }
+          }
         })
-          .limit(parseInt(limit)) // limit result per pag
-          .skip(parseInt(skip)); // skip results;
+          .limit(parseInt(limit)) 
+          .skip(parseInt(skip)); 
+
         total = await DB.Place.find({
-          Location: { $regex: new RegExp(req.body.city) },
+          Coordinates : 
+          { 
+            $near :
+            {
+              $geometry : 
+              {
+                type : "Point" ,
+                coordinates : [ lat, lnt ] 
+              },
+              $maxDistance : 10000
+            }
+          }
         });
       }
+      console.log(total)
       if (places.length === 0) {
         Logger.error('Nothing was found');
         return res.status(404).send('Nothing was found');
