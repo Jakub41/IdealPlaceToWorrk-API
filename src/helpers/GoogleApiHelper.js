@@ -34,6 +34,12 @@ const addPlaceToDb = async (placeId) => {
       Name: fullInfoFronGoogleApi.result.name,
       Location: fullInfoFronGoogleApi.result.formatted_address,
       Types: fullInfoFronGoogleApi.result.types,
+      Coordinates: {
+          coordinates : [
+          fullInfoFronGoogleApi.result.geometry.location.lat,
+          fullInfoFronGoogleApi.result.geometry.location.lng
+        ]
+      },
       OpenHours:
         // eslint-disable-next-line operator-linebreak
         fullInfoFronGoogleApi.result.opening_hours.weekday_text &&
@@ -50,6 +56,7 @@ const addPlaceToDb = async (placeId) => {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
+    console.log(placeFromGoogleSchema.Coordinates)
     const placeToSave = await DB.Place.create(placeFromGoogleSchema);
     if (placeToSave) {
       Logger.info('Ok');

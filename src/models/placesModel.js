@@ -1,6 +1,20 @@
 import mongoose from 'mongoose';
 // import m2s from 'mongoose-to-swagger';
 
+const GeoSchema = new mongoose.Schema({
+  type: { 
+    type: String, 
+    default: 'Point', 
+    enum: ['Point'],
+    required: true
+  },
+  coordinates: {
+    type: [Number],
+    index: '2dsphere',
+    required: true
+  },
+}, { _id : false })
+
 const placeSchema = new mongoose.Schema({
   Name: {
     type: String,
@@ -14,6 +28,10 @@ const placeSchema = new mongoose.Schema({
   Location: {
     type: String,
     required: true,
+  },
+  Coordinates: {
+    type: GeoSchema,
+    required: true
   },
   Types: [
     {
@@ -147,6 +165,7 @@ const placeSchema = new mongoose.Schema({
   },
 });
 
+placeSchema.index({Coordinates: '2dsphere'})
 const PlaceModel = mongoose.model('place', placeSchema);
 
 // const swaggerSchema = m2s(PlaceModel);
