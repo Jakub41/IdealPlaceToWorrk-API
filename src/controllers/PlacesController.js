@@ -135,35 +135,32 @@ const PlacesController = {
       const { limit, skip } = req.query;
       if (placesFromGoogle || placesFromGoogle === null) {
         places = await DB.Place.find({
-          Name: { $regex: new RegExp(req.body.searchQuery, 'i')  },
+          Name: { $regex: new RegExp(req.body.searchQuery, 'i') },
           Coordinates: {
             $near: {
-              $geometry : {
-                type : "Point" ,
-                coordinates : [ lat, lnt ] 
+              $geometry: {
+                type: 'Point',
+                coordinates: [lat, lnt],
               },
               $maxDistance: 10000,
-            }
-          }
+            },
+          },
         })
           .limit(parseInt(limit)) // limit result per pag
           .skip(parseInt(skip)); // skip results;
 
-
-        total = await DB.Place.find(
-          {
-            Name: { $regex: new RegExp(req.body.searchQuery, 'i')  },
-            Coordinates : 
-              { $near :
-                {
-                  $geometry : {
-                      type : "Point" ,
-                      coordinates : [ lat, lnt ] },
-                  $maxDistance : 10000
-                }
-              }
-          }
-        );
+        total = await DB.Place.find({
+          Name: { $regex: new RegExp(req.body.searchQuery, 'i') },
+          Coordinates: {
+            $near: {
+              $geometry: {
+                type: 'Point',
+                coordinates: [lat, lnt],
+              },
+              $maxDistance: 10000,
+            },
+          },
+        });
       }
       if (places.length === 0) {
         Logger.error('Nothing was found');
@@ -191,36 +188,32 @@ const PlacesController = {
       let total = 0;
       if (placesFromGoogle || placesFromGoogle === null) {
         places = await DB.Place.find({
-          Coordinates : 
-          { $near :
-            {
-              $geometry : {
-                type : "Point" ,
-                coordinates : [ lat, lnt ] 
+          Coordinates: {
+            $near: {
+              $geometry: {
+                type: 'Point',
+                coordinates: [lat, lnt],
               },
-              $maxDistance : 10000
-            }
-          }
+              $maxDistance: 10000,
+            },
+          },
         })
-          .limit(parseInt(limit)) 
-          .skip(parseInt(skip)); 
+          .limit(parseInt(limit))
+          .skip(parseInt(skip));
 
         total = await DB.Place.find({
-          Coordinates : 
-          { 
-            $near :
-            {
-              $geometry : 
-              {
-                type : "Point" ,
-                coordinates : [ lat, lnt ] 
+          Coordinates: {
+            $near: {
+              $geometry: {
+                type: 'Point',
+                coordinates: [lat, lnt],
               },
-              $maxDistance : 10000
-            }
-          }
+              $maxDistance: 10000,
+            },
+          },
         });
       }
-      console.log(total)
+      console.log(total);
       if (places.length === 0) {
         Logger.error('Nothing was found');
         return res.status(404).send('Nothing was found');
