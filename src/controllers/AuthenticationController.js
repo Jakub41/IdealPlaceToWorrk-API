@@ -99,7 +99,7 @@ const AuthController = {
       <br/>
       Please click on this email to verify your email
       <br/>
-      http://localhost:3000/callback/${user.emailToken}
+      https://https://ideal-place-to-work-fe.herokuapp.com/callback/${user.emailToken}
       `;
       const email = await Service.emailService.sendEmail(
         'idealPlaceToWork@gmail.com',
