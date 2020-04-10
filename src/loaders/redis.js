@@ -6,10 +6,11 @@ import Logger from './logger';
 const REDIS_PORT = redisConfig.port || 6379;
 const REDIS_URL = process.env.REDIS_URL;
 
-let cache;
+let cache = '';
 // Prod
 if (process.env.NODE_ENV !== 'development') {
   cache = redis.createClient(REDIS_URL);
+  console.log('production', cache);
 }
 
 // Connect to redis Dev
