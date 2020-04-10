@@ -12,11 +12,7 @@
     "fix": "eslint './*' --fix",
     "prettier": "prettier --write ./src/**/*.js"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
+  
   "eslintIgnore": [
     "package.json",
     "package-lock.json",
