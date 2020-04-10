@@ -10,11 +10,12 @@ let cache = '';
 // Prod
 if (process.env.NODE_ENV !== 'development') {
   cache = redis.createClient(REDIS_URL);
-  console.log('production', cache);
+  Logger.info('production');
 }
 
 // Connect to redis Dev
 cache = redis.createClient(REDIS_PORT);
+console.log('development');
 
 // Check connection
 cache.on('connect', () => {
