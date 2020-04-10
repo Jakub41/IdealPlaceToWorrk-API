@@ -4,6 +4,7 @@
 import dotenv from 'dotenv';
 
 // Set the NODE_ENV to 'development' by default
+// Need for deployment
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Check if env exists
