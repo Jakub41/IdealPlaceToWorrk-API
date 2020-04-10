@@ -13,7 +13,6 @@ const checkPlaceInOurDBAndAddIfNeeded = async (name, latitude, longitude) => {
       `https://maps.googleapis.com/maps/api/place/textsearch/json?&query=${name}&location=${latitude},${longitude}&radius=10000&key=${googleApi.key}`,
     );
     const googlePlaces = await googlePlacesRespone.json();
-    console.log(googlePlaces)
     // eslint-disable-next-line vars-on-top
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < googlePlaces.results.length; i++) {
@@ -46,7 +45,6 @@ const checkPlacesOfSpecifcCityInDBOrAddToOurDb = async (
       `https://maps.googleapis.com/maps/api/place/textsearch/json?&query=coffee+work+cowork&location=${latitude},${longitude}&radius=10000&key=${googleApi.key}&pagetoken=${token}`,
     );
     const googlePlaces = await googlePlacesRespone.json();
-    console.log(googlePlaces)
     // eslint-disable-next-line vars-on-top
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < googlePlaces.results.length; i++) {

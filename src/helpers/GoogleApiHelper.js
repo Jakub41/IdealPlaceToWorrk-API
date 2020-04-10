@@ -56,7 +56,6 @@ const addPlaceToDb = async (placeId) => {
       createdAt: new Date(),
       updatedAt: new Date(),
     };
-    console.log(placeFromGoogleSchema.Coordinates)
     const placeToSave = await DB.Place.create(placeFromGoogleSchema);
     if (placeToSave) {
       Logger.info('Ok');

@@ -34,11 +34,11 @@ const ReviewsController = {
   },
   async getReviewForSpecificPlace(req, res, next) {
     try {
-      const reviews = await DB.Review.find({
-        PlaceId: req.params.placeId,
-      }).populate('UserId'); // This is working
+      const { limit, skip } = req.query;
+      const total = await DB.Review.find({PlaceId: req.params.placeId })
+      const reviews = await DB.Review.find({PlaceId: req.params.placeId }).populate('UserId').limit(parseInt(limit)).skip(parseInt(skip)); 
       if (reviews) {
-        return res.status(200).json({ reviews, total: reviews.length });
+        return res.status(200).json({ reviews, total: total.length });
       }
       return res.status(404).send('not found');
     } catch (err) {
