@@ -15,7 +15,7 @@ class ValidationError extends Error {
   }
 }
 
-if (envFound.error) {
+if (envFound.error && NODE_ENV === 'dev') {
   // Crash the entire app to notify of missing .env file
 
   // We cant use logger here because in the first place, process.env.LOG_LEVEL
