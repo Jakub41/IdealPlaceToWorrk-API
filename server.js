@@ -13,5 +13,5 @@ async function startServer() {
   }
 }
 
-// Starting the server
+// Starting the server because i said so
 startServer();
