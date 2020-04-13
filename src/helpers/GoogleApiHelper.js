@@ -11,6 +11,7 @@ const addPlaceToDb = async (placeId) => {
     );
     const photos = [];
     const fullInfoFronGoogleApi = await fullInfoFronGoogleApiResponse.json();
+
     if (
       // eslint-disable-next-line operator-linebreak
       fullInfoFronGoogleApi.result.name === 'Undefined' ||
@@ -26,26 +27,29 @@ const addPlaceToDb = async (placeId) => {
         );
       }
     }
+
     const placeFromGoogleSchema = {
       Website:
         // eslint-disable-next-line operator-linebreak
-        fullInfoFronGoogleApi.result.website &&
-        fullInfoFronGoogleApi.result.website,
+        fullInfoFronGoogleApi.result.website
+          ? fullInfoFronGoogleApi.result.website
+          : '',
       Name: fullInfoFronGoogleApi.result.name,
       Location: fullInfoFronGoogleApi.result.formatted_address,
       Types: fullInfoFronGoogleApi.result.types,
       Coordinates: {
-          coordinates : [
+        coordinates: [
           fullInfoFronGoogleApi.result.geometry.location.lat,
-          fullInfoFronGoogleApi.result.geometry.location.lng
-        ]
+          fullInfoFronGoogleApi.result.geometry.location.lng,
+        ],
       },
       OpenHours:
         // eslint-disable-next-line operator-linebreak
-        fullInfoFronGoogleApi.result.opening_hours.weekday_text &&
-        fullInfoFronGoogleApi.result.opening_hours.weekday_text,
+        fullInfoFronGoogleApi.result.opening_hours
+          ? fullInfoFronGoogleApi.result.opening_hours.weekday_text
+          : [],
       // to work on pictures and to add link that can be used on fe
-      Pictures: photos.length > 0 && photos,
+      Pictures: photos.length > 0 && photos ? photos : '',
       PriceToEnter: fullInfoFronGoogleApi.result.price_level
         ? fullInfoFronGoogleApi.result.price_level
         : -1,
@@ -59,6 +63,7 @@ const addPlaceToDb = async (placeId) => {
     const placeToSave = await DB.Place.create(placeFromGoogleSchema);
     if (placeToSave) {
       Logger.info('Ok');
+      // Logger.info(placeToSave);
       return placeToSave;
     }
     Logger.info('Something went wrong. Please try later');

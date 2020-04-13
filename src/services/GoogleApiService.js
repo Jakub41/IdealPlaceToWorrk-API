@@ -45,6 +45,7 @@ const checkPlacesOfSpecifcCityInDBOrAddToOurDb = async (
       `https://maps.googleapis.com/maps/api/place/textsearch/json?&query=coffee+work+cowork&location=${latitude},${longitude}&radius=10000&key=${googleApi.key}&pagetoken=${token}`,
     );
     const googlePlaces = await googlePlacesRespone.json();
+    let newPlace = [];
     // eslint-disable-next-line vars-on-top
     // eslint-disable-next-line no-plusplus
     for (let i = 0; i < googlePlaces.results.length; i++) {
@@ -52,12 +53,15 @@ const checkPlacesOfSpecifcCityInDBOrAddToOurDb = async (
       const duplacetInOurDB = await DB.Place.findOne({
         GoogleId: googlePlaces.results[i].place_id,
       });
+      newPlace.push(duplacetInOurDB);
       if (duplacetInOurDB) {
         Logger.info('place already exists in our db');
         continue;
       }
       // eslint-disable-next-line no-use-before-define
-      GoogleHelper.addPlaceToDb(googlePlaces.results[i].place_id);
+      newPlace.push(
+        GoogleHelper.addPlaceToDb(googlePlaces.results[i].place_id),
+      );
     }
     if (googlePlaces.next_page_token) {
       checkPlacesOfSpecifcCityInDBOrAddToOurDb(
@@ -66,7 +70,7 @@ const checkPlacesOfSpecifcCityInDBOrAddToOurDb = async (
         googlePlaces.next_page_token,
       );
     }
-    return null;
+    return newPlace != [] ? newPlace : null;
   } catch (err) {
     Logger.error(err);
   }

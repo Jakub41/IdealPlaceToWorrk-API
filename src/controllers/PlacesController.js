@@ -178,6 +178,14 @@ const PlacesController = {
       // eslint-disable-next-line max-len
       const lat = parseFloat(req.body.latitude);
       const lnt = parseFloat(req.body.longitude);
+      console.log(
+        '--------------------------------------------------------------------------',
+      );
+      console.log(lat);
+      console.log(lnt);
+      console.log(
+        '--------------------------------------------------------------------------',
+      );
       const placesFromGoogle = await Service.GoogleService.checkPlacesOfSpecifcCityInDBOrAddToOurDb(
         req.body.latitude,
         req.body.longitude,
@@ -186,7 +194,7 @@ const PlacesController = {
       const { limit, skip } = req.query;
       let places = [];
       let total = 0;
-      if (placesFromGoogle || placesFromGoogle === null) {
+      if (/*placesFromGoogle || */ placesFromGoogle === null) {
         places = await DB.Place.find({
           Coordinates: {
             $near: {
@@ -212,8 +220,10 @@ const PlacesController = {
             },
           },
         });
+      } else {
+        places = placesFromGoogle;
+        total = placesFromGoogle;
       }
-      console.log(total);
       if (places.length === 0) {
         Logger.error('Nothing was found');
         return res.status(404).send('Nothing was found');
