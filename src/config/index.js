@@ -12,4 +12,5 @@ export {
   facebookConfig,
   redisConfig,
   googleOAuthConfig,
+  rookOutToken,
 } from './config';

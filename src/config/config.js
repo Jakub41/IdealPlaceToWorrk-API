@@ -4,7 +4,7 @@
 import dotenv from 'dotenv';
 
 // Set the NODE_ENV to 'development' by default
-// Need for deployment
+// Need for deployment
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 // Check if env exists
@@ -83,4 +83,9 @@ export const redisConfig = {
 export const googleOAuthConfig = {
   client_id: process.env.GOOGLE_CLIENT_ID,
   client_secret: process.env.GOOGLE_CLIENT_SECRET,
+};
+
+// RookOut Token
+export const rookOutToken = {
+  token: process.env.ROOK_TOKEN,
 };

@@ -4,9 +4,8 @@
         "node": true
     },
     "extends": [
-        // REMOVED ANNOYING RULES PLEASE DO NOT ADD AGAIN
-        //"plugin:prettier/recommended",
-        //"airbnb-base"
+        "plugin:prettier/recommended",
+        "airbnb-base"
     ],
     "plugins": [
         //"prettier"

@@ -1,4 +1,3 @@
-import geoip from 'geoip-lite';
 import DB from '../models/index';
 import Logger from '../loaders/logger';
 import Service from '../services/index';
@@ -146,8 +145,8 @@ const PlacesController = {
             },
           },
         })
-          .limit(parseInt(limit)) // limit result per pag
-          .skip(parseInt(skip)); // skip results;
+          .limit(parseInt(limit, 10)) // limit result per page
+          .skip(parseInt(skip, 10)); // skip results;
 
         total = await DB.Place.find({
           Name: { $regex: new RegExp(req.body.searchQuery, 'i') },
@@ -194,7 +193,7 @@ const PlacesController = {
       const { limit, skip } = req.query;
       let places = [];
       let total = 0;
-      if (/*placesFromGoogle || */ placesFromGoogle === null) {
+      if (placesFromGoogle || placesFromGoogle === null) {
         places = await DB.Place.find({
           Coordinates: {
             $near: {
@@ -202,12 +201,19 @@ const PlacesController = {
                 type: 'Point',
                 coordinates: [lat, lnt],
               },
-              $maxDistance: 10000,
+              $maxDistance: 40000,
             },
           },
         })
-          .limit(parseInt(limit))
-          .skip(parseInt(skip));
+          .limit(parseInt(limit, 10))
+          .skip(parseInt(skip, 10));
+        console.log(
+          '+++++++++++++++++++++++++++++++   places   ++++++++++++++++++++++++++++++++++++',
+        );
+        console.log(places);
+        console.log(
+          '+++++++++++++++++++++++++++++++   end   ++++++++++++++++++++++++++++++++++++',
+        );
 
         total = await DB.Place.find({
           Coordinates: {
@@ -216,7 +222,7 @@ const PlacesController = {
                 type: 'Point',
                 coordinates: [lat, lnt],
               },
-              $maxDistance: 10000,
+              $maxDistance: 40000,
             },
           },
         });

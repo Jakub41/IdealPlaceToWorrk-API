@@ -35,8 +35,11 @@ const ReviewsController = {
   async getReviewForSpecificPlace(req, res, next) {
     try {
       const { limit, skip } = req.query;
-      const total = await DB.Review.find({PlaceId: req.params.placeId })
-      const reviews = await DB.Review.find({PlaceId: req.params.placeId }).populate('UserId').limit(parseInt(limit)).skip(parseInt(skip)); 
+      const total = await DB.Review.find({ PlaceId: req.params.placeId });
+      const reviews = await DB.Review.find({ PlaceId: req.params.placeId })
+        .populate('UserId')
+        .limit(parseInt(limit, 10))
+        .skip(parseInt(skip, 10));
       if (reviews) {
         return res.status(200).json({ reviews, total: total.length });
       }

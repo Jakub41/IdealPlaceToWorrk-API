@@ -1,3 +1,5 @@
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable operator-linebreak */
 import randomstring from 'randomstring';
 import Logger from '../loaders/logger';
 // eslint-disable-next-line import/no-named-as-default
@@ -9,9 +11,10 @@ import Middleware from '../middleware';
 
 const AuthController = {
   // new Facebook login without passportjs
-  facebookLogin(req, res, next) {
+  facebookLogin(req, res) {
     // get user's email or use a fake one in case the user registered using a phone number
-    const email = req.body.profile.email || req.body.auth.userID + '@fbuser.null';
+    const email =
+      req.body.profile.email || `${req.body.auth.userID}@fbuser.null`;
     // create the user object mapping the data coming from FE
     const user = {
       username: email,
@@ -31,27 +34,25 @@ const AuthController = {
       }
       if (!fuser) {
         // if the user doesn't exist create a new user
-        DB.User.create(user, (err, cuser) => {
+        DB.User.create(user, (cuser) => {
           if (err) {
             res.status(500).send(err);
             return;
           }
           // generate a token for the user
           const token = auth.getToken({ _id: cuser._id });
-          res.status(200)
-            .send({
-              user: cuser,
-              accessToken: token,
-            });
+          res.status(200).send({
+            user: cuser,
+            accessToken: token,
+          });
         });
       } else {
         // if the user already exists then generate a token and send to FE
         const token = auth.getToken({ _id: fuser._id });
-        res.status(200)
-          .send({
-            user: user,
-            accessToken: token,
-          });
+        res.status(200).send({
+          user,
+          accessToken: token,
+        });
       }
     });
   },
@@ -76,12 +77,10 @@ const AuthController = {
       // Not valid message and list failed rules otherwise register
       if (isValid === false) {
         Logger.info('Invalid password', failedRules);
-        return res
-          .status(400)
-          .json({
-            msg: 'Password invalid',
-            rules: failedRules
-          });
+        return res.status(400).json({
+          msg: 'Password invalid',
+          rules: failedRules,
+        });
       }
 
       const user = await DB.User.register(userSchema, req.body.password);
@@ -112,8 +111,7 @@ const AuthController = {
         Logger.error('Email was not sent. Something went wrong');
       }
       Logger.info('User and token created successfully.');
-      return res.status(200)
-        .send({ user });
+      return res.status(200).send({ user });
     } catch (err) {
       Logger.error(err);
       return next(err);
@@ -130,11 +128,10 @@ const AuthController = {
           .status(401)
           .send('Token was not created. Something went wrong');
       }
-      return res.status(200)
-        .send({
-          user: req.user,
-          accessToken: token
-        });
+      return res.status(200).send({
+        user: req.user,
+        accessToken: token,
+      });
     } catch (err) {
       Logger.error(err);
       return next(err);
@@ -151,11 +148,10 @@ const AuthController = {
           .status(401)
           .send('Token was not created. Something went wrong');
       }
-      return res.status(200)
-        .send({
-          user: req.user,
-          accessToken: token
-        });
+      return res.status(200).send({
+        user: req.user,
+        accessToken: token,
+      });
     } catch (err) {
       Logger.error(err);
       return next(err);
@@ -168,18 +164,16 @@ const AuthController = {
         user.active = true;
         user.save();
       }
-        const token = auth.getToken({ _id: user._id });
-        Logger.info('user');
-        if (!user) {
-          Logger.error('User was not found. Something went wrong');
-          return res.status(404)
-            .send('User was not found. Something went wrong');
-        }
-        return res.status(200)
-          .send({
-            user,
-            accessToken: token
-          });
+      const token = auth.getToken({ _id: user._id });
+      Logger.info('user');
+      if (!user) {
+        Logger.error('User was not found. Something went wrong');
+        return res.status(404).send('User was not found. Something went wrong');
+      }
+      return res.status(200).send({
+        user,
+        accessToken: token,
+      });
     } catch (err) {
       Logger.error(err);
       return next(err);

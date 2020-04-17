@@ -1,10 +1,12 @@
+/* eslint-disable import/no-mutable-exports */
+/* eslint-disable no-const-assign */
 import redis from 'redis';
 import { redisConfig } from '../config';
 import Logger from './logger';
 
 // Redis default port === 6379
 const REDIS_PORT = redisConfig.port || 6379;
-const REDIS_URL = process.env.REDIS_URL;
+const { REDIS_URL } = process.env;
 
 let cache = '';
 // Prod
@@ -14,7 +16,7 @@ if (process.env.NODE_ENV !== 'development') {
 } else {
   // Connect to redis Dev
   cache = redis.createClient(REDIS_PORT);
-  console.log('development');
+  Logger.info('development');
 }
 
 // Check connection
